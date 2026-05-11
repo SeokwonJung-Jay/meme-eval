@@ -98,30 +98,13 @@ const probeAfter = episode.probe_after_idx;
 
     <!-- Timeline + Sparkline -->
     <div class="timeline">
-      <div class="tl-graph" id="tl-graph" aria-hidden="true">
-        <!-- SVG injected by JS -->
+      <div class="series-key">
+        <span><span class="line-key size"></span>memory size</span>
+        <span><span class="line-key gold"></span>gold-fact %</span>
       </div>
 
-      <!-- Probe events: evaluation moments, NOT a session. Shown above the session row -->
-      <div class="tl-probe-row" aria-label="Probe events">
-        {sessions.map((sess) => {
-          const isBefore = sess.kind === "probe-before";
-          const isAfter = sess.kind === "probe-after";
-          if (isBefore || isAfter) {
-            const which = isBefore ? "before" : "after";
-            return (
-              <button
-                class={`probe-marker probe-${which}`}
-                data-probe={which}
-                title={`Probe (${which}-questions)`}
-              >
-                <span class="probe-arrow" aria-hidden="true">▼</span>
-                <span class="probe-label">probe {which}</span>
-              </button>
-            );
-          }
-          return <div class="probe-slot" aria-hidden="true"></div>;
-        })}
+      <div class="tl-graph" id="tl-graph" aria-hidden="true">
+        <!-- SVG injected by JS -->
       </div>
 
       <div class="tl-row" role="tablist" aria-label="Sessions">
@@ -142,14 +125,35 @@ const probeAfter = episode.probe_after_idx;
           );
         })}
       </div>
+
+      <!-- Probe events: evaluation moments, NOT sessions. Positioned below the session row.
+           - probe before: between session 13 and 14 (asked after session 13, before evidence at 14)
+           - probe after:  to the right of session 16 (asked at the end of the episode) -->
+      <div class="tl-probe-row" aria-label="Probe events">
+        <button
+          class="probe-marker probe-before"
+          data-probe="before"
+          title="Probe (before-questions), asked after session 13"
+          style="left: 80.555%;"
+        >
+          <span class="probe-arrow" aria-hidden="true">▲</span>
+          <span class="probe-label">probe before</span>
+        </button>
+        <button
+          class="probe-marker probe-after"
+          data-probe="after"
+          title="Probe (after-questions), asked after session 16"
+          style="left: 97.222%;"
+        >
+          <span class="probe-arrow" aria-hidden="true">▲</span>
+          <span class="probe-label">probe after</span>
+        </button>
+      </div>
+
       <div class="tl-legend">
         <span><span class="dot filler"></span>filler session</span>
         <span><span class="dot evidence"></span>evidence session</span>
-        <span><span class="probe-mini">▼</span>probe (evaluation event)</span>
-        <span class="series-key">
-          <span class="line-key size"></span>memory size
-          <span class="line-key gold"></span>gold-fact %
-        </span>
+        <span><span class="probe-mini">▲</span>probe (evaluation event)</span>
       </div>
     </div>
 
@@ -833,11 +837,29 @@ const probeAfter = episode.probe_after_idx;
   .sparkline .axis-label { font-size: 10px; fill: var(--muted); }
   .sparkline .sel-x { font-size: 11px; fill: var(--fg); font-weight: 600; }
 
-  /* Align timeline + probe row so each box CENTER lines up with the SVG data point at the same index.
-     SVG has TL_PAD.left = 50 (out of TL_W = 900) ⇒ data points span 5.56% to 94.44% of the chart width.
-     With 17 equal cells (gap=0) and padding-x = (100% × 50) / 1800 ≈ 2.78%, cell centers land exactly on those positions. */
-  .tl-row,
-  .tl-probe-row {
+  /* Series-key (memory size / gold-fact %) above the chart, centered */
+  .timeline > .series-key {
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .line-key {
+    display: inline-block;
+    width: 18px;
+    height: 2px;
+    background: #2563eb;
+    vertical-align: middle;
+    margin-right: 5px;
+  }
+  .line-key.gold { background: #d97706; }
+
+  /* Align session row so each box CENTER lines up with the SVG data point at the same index.
+     SVG has TL_PAD.left = 50 (out of TL_W = 900) ⇒ data points span 5.56% to 94.44% of width.
+     With 17 equal cells (gap=0) and padding-x = (100% × 50) / 1800 ≈ 2.78%, cell centers land on those positions. */
+  .tl-row {
     display: grid;
     grid-template-columns: repeat(17, 1fr);
     gap: 0;
@@ -861,22 +883,27 @@ const probeAfter = episode.probe_after_idx;
   .tl-cell.active { outline: 2px solid var(--fg); outline-offset: 1px; }
   .tl-cell:hover { transform: translateY(-1px); }
 
-  /* Probe markers: separate evaluation events, not sessions */
+  /* Probe events: separate evaluation moments positioned beneath the session row.
+     Markers use absolute left positioning to land between/after the relevant box centers. */
   .tl-probe-row {
-    margin-bottom: 4px;
+    position: relative;
+    height: 34px;
+    margin-top: 4px;
   }
-  .probe-slot { visibility: hidden; }
   .probe-marker {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
     background: transparent;
     border: 0;
-    padding: 2px 0 4px;
-    margin: 0 2px;
+    padding: 2px 6px 4px;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0;
     line-height: 1;
+    border-radius: 6px;
   }
   .probe-marker .probe-arrow {
     font-size: 14px;
@@ -885,12 +912,13 @@ const probeAfter = episode.probe_after_idx;
   .probe-marker.probe-before .probe-arrow { color: #c08a1a; }
   .probe-marker.probe-after .probe-arrow { color: #b86a18; }
   .probe-marker .probe-label {
-    font-size: 9px;
+    font-size: 10px;
     letter-spacing: 0.04em;
     color: var(--muted);
-    margin-top: 1px;
+    margin-top: 2px;
     white-space: nowrap;
   }
+  .probe-marker:hover { background: #f7f7f1; }
   .probe-marker.active .probe-arrow { transform: scale(1.25); }
   .probe-marker.active .probe-label { color: var(--fg); font-weight: 700; }
 
@@ -913,18 +941,7 @@ const probeAfter = episode.probe_after_idx;
   }
   .tl-legend .dot.filler { background: #f3f3ed; }
   .tl-legend .dot.evidence { background: #d5e8ee; }
-  .tl-legend .dot.probe-before { background: #fff0c8; }
-  .tl-legend .dot.probe-after { background: #ffd9a8; }
-  .series-key { margin-left: auto; display: inline-flex; gap: 12px; }
-  .line-key {
-    display: inline-block;
-    width: 18px;
-    height: 2px;
-    background: #2563eb;
-    vertical-align: middle;
-    margin-right: 4px;
-  }
-  .line-key.gold { background: #d97706; }
+  .tl-legend .probe-mini { color: #b86a18; margin-right: 4px; }
 
   /* Detail pane */
   .detail-pane { min-height: 280px; }
