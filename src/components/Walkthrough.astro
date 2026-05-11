@@ -182,8 +182,8 @@ const probeAfter = episode.probe_after_idx;
 
     // ─── Sparkline (SVG) ─────────────────────────────────────────────
     const TL_W = 900;
-    const TL_H = 120;
-    const TL_PAD = { top: 18, right: 50, bottom: 10, left: 50 };
+    const TL_H = 130;
+    const TL_PAD = { top: 28, right: 50, bottom: 10, left: 50 };
 
     function drawSparkline() {
       const s = series[state.system];
@@ -233,8 +233,8 @@ const probeAfter = episode.probe_after_idx;
               );
             })
             .join("")}
-          <text x="${TL_PAD.left - 6}" y="${TL_PAD.top - 6}" fill="${STROKE_SIZE}" font-size="10" text-anchor="end">chars</text>
-          <text x="${TL_W - TL_PAD.right + 6}" y="${TL_PAD.top - 6}" fill="${STROKE_GOLD}" font-size="10" text-anchor="start">gold %</text>
+          <text x="${TL_PAD.left - 6}" y="14" fill="${STROKE_SIZE}" font-size="10" text-anchor="end">chars</text>
+          <text x="${TL_W - TL_PAD.right + 6}" y="14" fill="${STROKE_GOLD}" font-size="10" text-anchor="start">gold %</text>
           <path d="${sizePath}" fill="none" stroke="${STROKE_SIZE}" stroke-width="1.8" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
           <path d="${goldPath}" fill="none" stroke="${STROKE_GOLD}" stroke-width="1.8" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
           ${sel !== null
