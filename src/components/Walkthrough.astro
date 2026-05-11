@@ -150,8 +150,8 @@ const probeAfter = episode.probe_after_idx;
 
     // ─── Sparkline (SVG) ─────────────────────────────────────────────
     const TL_W = 900;
-    const TL_H = 80;
-    const TL_PAD = { top: 8, right: 8, bottom: 4, left: 8 };
+    const TL_H = 110;
+    const TL_PAD = { top: 14, right: 12, bottom: 18, left: 56 };
 
     function drawSparkline() {
       const s = series[state.system];
@@ -171,34 +171,34 @@ const probeAfter = episode.probe_after_idx;
       const container = document.getElementById("tl-graph");
       const sizePath = pathFor(s.size);
       const goldPath = pathFor(s.gold);
+      const sel = state.session;
 
-      // y-axis ticks
-      const ticks = [0, 0.5, 1].map((t) => ({
-        y: y(maxY * t),
-        v: Math.round(maxY * t),
-      }));
+      const fmt = (v) =>
+        v >= 1000 ? `${(v / 1000).toFixed(1)}K` : String(Math.round(v));
+      const yTicks = [0, 0.5, 1];
 
       container.innerHTML = `
         <svg viewBox="0 0 ${TL_W} ${TL_H}" preserveAspectRatio="none" class="sparkline">
-          ${ticks
-            .map(
-              (t) =>
-                `<line x1="${TL_PAD.left}" x2="${TL_W - TL_PAD.right}" y1="${t.y}" y2="${t.y}" class="tick"/>`,
-            )
+          <!-- y-axis grid + labels -->
+          ${yTicks
+            .map((t) => {
+              const yv = y(maxY * t);
+              return (
+                `<line x1="${TL_PAD.left}" x2="${TL_W - TL_PAD.right}" y1="${yv}" y2="${yv}" class="tick"/>` +
+                `<text x="${TL_PAD.left - 6}" y="${yv + 3}" class="axis-label" text-anchor="end">${fmt(maxY * t)}</text>`
+              );
+            })
             .join("")}
+          <!-- lines -->
           <path d="${sizePath}" class="line size"/>
           <path d="${goldPath}" class="line gold"/>
-          ${s.size
-            .map(
-              (_, i) =>
-                `<circle cx="${x(i).toFixed(1)}" cy="${y(s.size[i]).toFixed(1)}" r="2.5" class="dot size${i === state.session ? " active" : ""}"/>` +
-                `<circle cx="${x(i).toFixed(1)}" cy="${y(s.gold[i]).toFixed(1)}" r="2.5" class="dot gold${i === state.session ? " active" : ""}"/>`,
-            )
-            .join("")}
-          ${state.session !== null
-            ? `<line class="sel-line" x1="${x(state.session).toFixed(1)}" x2="${x(state.session).toFixed(1)}" y1="${TL_PAD.top}" y2="${TL_H - TL_PAD.bottom}"/>`
+          <!-- selected session dots -->
+          ${sel !== null
+            ? `<line class="sel-line" x1="${x(sel).toFixed(1)}" x2="${x(sel).toFixed(1)}" y1="${TL_PAD.top}" y2="${TL_H - TL_PAD.bottom}"/>` +
+              `<circle cx="${x(sel).toFixed(1)}" cy="${y(s.size[sel]).toFixed(1)}" r="4" class="dot size active"/>` +
+              `<circle cx="${x(sel).toFixed(1)}" cy="${y(s.gold[sel]).toFixed(1)}" r="4" class="dot gold active"/>` +
+              `<text x="${x(sel).toFixed(1)}" y="${TL_H - 4}" class="axis-label sel-x" text-anchor="middle">session ${sel}</text>`
             : ""}
-          <text x="${TL_W - TL_PAD.right}" y="${TL_H - 6}" text-anchor="end" class="axis-label">${maxY.toLocaleString()} chars</text>
         </svg>
       `;
     }
@@ -230,12 +230,36 @@ const probeAfter = episode.probe_after_idx;
         .replace(/"/g, "&quot;");
     }
 
+    const USER_AVATAR_SVG =
+      '<svg viewBox="0 0 24 24" class="avatar-icon" aria-hidden="true">' +
+      '<circle cx="12" cy="8" r="4" fill="#b0b0b0" stroke="#888" stroke-width="0.8"/>' +
+      '<path d="M4 22 C4 16, 8 14, 12 14 C16 14, 20 16, 20 22" fill="#b0b0b0" stroke="#888" stroke-width="0.8" stroke-linecap="round"/>' +
+      "</svg>";
+    const BOT_AVATAR_SVG =
+      '<svg viewBox="0 0 24 24" class="avatar-icon" aria-hidden="true">' +
+      '<rect x="4" y="8" width="16" height="12" rx="2" fill="#d6e9fb" stroke="#185fa5" stroke-width="0.8"/>' +
+      '<line x1="12" y1="4" x2="12" y2="8" stroke="#185fa5" stroke-width="0.8" stroke-linecap="round"/>' +
+      '<circle cx="12" cy="3" r="1.2" fill="#d6e9fb" stroke="#185fa5" stroke-width="0.8"/>' +
+      '<circle cx="9" cy="13" r="1.2" fill="#185fa5"/>' +
+      '<circle cx="15" cy="13" r="1.2" fill="#185fa5"/>' +
+      '<line x1="9" y1="17" x2="15" y2="17" stroke="#185fa5" stroke-width="0.8" stroke-linecap="round"/>' +
+      "</svg>";
+
     function renderConversation(turns) {
       return turns
-        .map(
-          (t) =>
-            `<div class="turn turn-${t.role}"><span class="role">${escapeHtml(t.role)}</span><div class="bubble">${escapeHtml(t.content)}</div></div>`,
-        )
+        .map((t) => {
+          const avatar = t.role === "user" ? USER_AVATAR_SVG : BOT_AVATAR_SVG;
+          const roleLabel = t.role === "user" ? "User" : "Assistant";
+          return (
+            `<div class="turn turn-${t.role}">` +
+            `<div class="avatar">${avatar}</div>` +
+            `<div class="msg">` +
+            `<div class="role">${roleLabel}</div>` +
+            `<div class="bubble">${escapeHtml(t.content)}</div>` +
+            `</div>` +
+            `</div>`
+          );
+        })
         .join("");
     }
 
@@ -490,19 +514,16 @@ const probeAfter = episode.probe_after_idx;
       const sess = sessions[state.session];
       const isProbe = sess.kind === "probe-before" || sess.kind === "probe-after";
       const root = document.getElementById("detail-pane");
-      if (isProbe) {
-        root.innerHTML = renderQATrace();
-        root.className = "detail-pane detail-probe";
-      } else {
-        root.innerHTML = `
-          <div class="detail-grid">
-            <div class="detail-left">${renderSessionPane()}</div>
-            <div class="detail-right">${renderSnapshotPane()}</div>
-          </div>
-        `;
-        root.className = "detail-pane detail-normal";
-        hookFullSnapshot();
-      }
+      const sessionSnap = `
+        <div class="detail-grid">
+          <div class="detail-left">${renderSessionPane()}</div>
+          <div class="detail-right">${renderSnapshotPane()}</div>
+        </div>
+      `;
+      const qa = isProbe ? `<div class="detail-qa">${renderQATrace()}</div>` : "";
+      root.innerHTML = sessionSnap + qa;
+      root.className = isProbe ? "detail-pane detail-probe" : "detail-pane detail-normal";
+      hookFullSnapshot();
     }
 
     // ─── Wire events ─────────────────────────────────────────────────
@@ -650,15 +671,27 @@ const probeAfter = episode.probe_after_idx;
     border-collapse: collapse;
     width: 100%;
     font-size: 14px;
+    table-layout: fixed;
   }
   .result-grid th,
-  .result-grid td { padding: 6px 8px; text-align: center; }
+  .result-grid td { padding: 6px 6px; text-align: center; }
+  .result-grid th:first-child,
+  .result-grid td:first-child {
+    width: 70px;
+  }
   .result-grid th.sys-col {
     border-bottom: 2px solid var(--border);
     padding-bottom: 8px;
-    min-width: 88px;
+    width: calc((100% - 70px) / 7);
   }
-  .result-grid .sys-name { display: block; font-weight: 700; font-size: 13px; }
+  .result-grid .sys-name {
+    display: block;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1.2;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
   .result-grid .sys-llm {
     display: block;
     font-size: 10px;
@@ -667,15 +700,12 @@ const probeAfter = episode.probe_after_idx;
     letter-spacing: 0;
     margin-top: 2px;
   }
-  .result-grid .sys-col.featured {
-    background: linear-gradient(to bottom, #fff8df 0%, transparent 100%);
-  }
   .result-grid .task-row-label {
     text-align: left;
     font-weight: 700;
     color: var(--fg);
     border-right: 1px solid var(--border);
-    padding-right: 14px;
+    padding-right: 10px;
   }
   .gcell {
     width: 100%;
@@ -693,7 +723,6 @@ const probeAfter = episode.probe_after_idx;
   .gcell.fail { color: #b94747; background: #fbeaea; border-color: #efc8c8; }
   .totals-row { font-weight: 700; }
   .totals-row td { padding-top: 8px; border-top: 1px solid var(--border); }
-  .totals-row .total.featured { background: #fff5cf; border-radius: 6px; }
 
   /* System tabs */
   .system-tabs {
@@ -730,16 +759,16 @@ const probeAfter = episode.probe_after_idx;
 
   /* Timeline */
   .timeline { margin-bottom: 22px; }
-  .tl-graph { width: 100%; height: 80px; margin-bottom: 4px; }
-  .sparkline { width: 100%; height: 80px; display: block; }
+  .tl-graph { width: 100%; height: 110px; margin-bottom: 4px; }
+  .sparkline { width: 100%; height: 110px; display: block; overflow: visible; }
   .sparkline .tick { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 3; }
-  .sparkline .line.size { stroke: #1a1a1a; stroke-width: 1.5; fill: none; }
-  .sparkline .line.gold { stroke: #b48a1b; stroke-width: 1.5; fill: none; stroke-dasharray: 4 2; }
-  .sparkline .dot.size { fill: #1a1a1a; }
-  .sparkline .dot.gold { fill: #b48a1b; }
-  .sparkline .dot.active { r: 4; stroke: #fff; stroke-width: 1.5; }
+  .sparkline .line.size { stroke: #2563eb; stroke-width: 1.8; fill: none; }
+  .sparkline .line.gold { stroke: #d97706; stroke-width: 1.8; fill: none; }
+  .sparkline .dot.size.active { fill: #2563eb; stroke: #fff; stroke-width: 1.5; }
+  .sparkline .dot.gold.active { fill: #d97706; stroke: #fff; stroke-width: 1.5; }
   .sparkline .sel-line { stroke: #aaa; stroke-width: 1; stroke-dasharray: 2 2; }
   .sparkline .axis-label { font-size: 10px; fill: var(--muted); }
+  .sparkline .sel-x { font-size: 11px; fill: var(--fg); font-weight: 600; }
 
   .tl-row {
     display: grid;
@@ -790,11 +819,11 @@ const probeAfter = episode.probe_after_idx;
     display: inline-block;
     width: 18px;
     height: 2px;
-    background: #1a1a1a;
+    background: #2563eb;
     vertical-align: middle;
     margin-right: 4px;
   }
-  .line-key.gold { background: #b48a1b; border-top: 0; }
+  .line-key.gold { background: #d97706; }
 
   /* Detail pane */
   .detail-pane { min-height: 280px; }
@@ -871,27 +900,55 @@ const probeAfter = episode.probe_after_idx;
   }
   .gold-facts em { color: var(--muted); font-style: italic; font-size: 12px; }
 
-  .sess-conv { max-height: 460px; overflow-y: auto; padding-right: 8px; }
-  .turn { margin: 8px 0; }
+  .sess-conv { max-height: 520px; overflow-y: auto; padding-right: 6px; }
+  .turn {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 10px;
+    margin: 10px 0;
+    align-items: start;
+  }
+  .turn .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .turn .avatar-icon {
+    width: 18px;
+    height: 18px;
+  }
+  .turn .msg { min-width: 0; }
   .turn .role {
-    display: inline-block;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
   }
+  .turn-assistant .role { color: #185fa5; }
   .turn .bubble {
     background: #f7f7f1;
-    padding: 8px 12px;
-    border-radius: 8px;
+    padding: 10px 14px;
+    border-radius: 4px 14px 14px 14px;
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.55;
     white-space: pre-wrap;
     word-break: break-word;
   }
-  .turn-assistant .bubble { background: #eef2f5; }
+  .turn-assistant .bubble {
+    background: #eef4fa;
+  }
+
+  .detail-qa {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+  }
 
   /* Snapshot pane */
   .snap-controls { display: inline-flex; gap: 4px; }
