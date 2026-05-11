@@ -45,8 +45,8 @@
       },
 
       "Agg": {
-        "bm25":         { "encoded": true,  "maintained": true,  "retrieved": false, "answered": false, "note": "retrieved_context covers oncall+runbook chunks but the #aurora-pager chunk falls below top-k; answer cannot include all three entities" },
-        "dense":        { "encoded": true,  "maintained": true,  "retrieved": false, "answered": false, "note": "similar partial coverage — pager chunk not in top-k" },
+        "bm25":         { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": false, "note": "raw chunks for all three entities (paired oncall, #aurora-pager, wiki.aurora.dev/incident-response) reach the retrieved context; the answering LLM still omits one in the final reply" },
+        "dense":        { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": false, "note": "embedding retrieval surfaces all three entity facts; answering LLM omits one in the final reply" },
         "graphiti":     { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": false, "note": "all three entity edges encoded; retrieval surfaces them but the answering LLM omits one in the final reply" },
         "karpathy":     { "encoded": true,  "maintained": false, "retrieved": false, "answered": false, "note": "wiki article rewrite keeps oncall_rotation but loses #aurora-pager and the runbook URL from the surfaced article" },
         "md_file":      { "encoded": true,  "maintained": true,  "retrieved": false, "answered": false, "note": "store retains all three lines; the answering loop only opens the oncall and runbook lines, missing #aurora-pager" },
