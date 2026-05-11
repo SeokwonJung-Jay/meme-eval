@@ -1,13 +1,13 @@
 ---
 const tasks = ["ER", "Agg", "Tr", "Del", "Cas", "Abs"];
 const rows = [
-  { name: "RULER", coverage: ["ER"] },
-  { name: "NoLiMa", coverage: ["ER"] },
-  { name: "LoCoMo", coverage: ["ER", "Agg", "Tr"] },
-  { name: "LongMemEval", coverage: ["ER", "Agg", "Tr", "Del"] },
-  { name: "MemBench", coverage: ["ER", "Tr"] },
-  { name: "MemoryAgentBench", coverage: ["ER", "Agg", "Tr", "Del"] },
-  { name: "MEME (ours)", coverage: tasks, featured: true },
+  { name: "RULER", url: "https://arxiv.org/abs/2404.06654", coverage: ["ER"] },
+  { name: "NoLiMa", url: "https://arxiv.org/abs/2502.05167", coverage: ["ER"] },
+  { name: "LoCoMo", url: "https://arxiv.org/abs/2402.17753", coverage: ["ER", "Agg", "Tr"] },
+  { name: "LongMemEval", url: "https://arxiv.org/abs/2410.10813", coverage: ["ER", "Agg", "Tr", "Del"] },
+  { name: "MemBench", url: "https://arxiv.org/abs/2506.21605", coverage: ["ER", "Tr"] },
+  { name: "MemoryAgentBench", url: "https://arxiv.org/abs/2507.05257", coverage: ["ER", "Agg", "Tr", "Del"] },
+  { name: "MEME (ours)", url: null, coverage: tasks, featured: true },
 ];
 ---
 
@@ -23,7 +23,13 @@ const rows = [
     <tbody>
       {rows.map((r) => (
         <tr class={r.featured ? "featured" : ""}>
-          <th scope="row">{r.name}</th>
+          <th scope="row">
+            {r.url ? (
+              <a href={r.url} target="_blank" rel="noopener noreferrer" class="ref-link">{r.name}</a>
+            ) : (
+              r.name
+            )}
+          </th>
           {tasks.map((t) => (
             <td class={r.coverage.includes(t) ? "yes" : "no"}>
               {r.coverage.includes(t) ? "✔" : "✘"}
@@ -69,6 +75,17 @@ const rows = [
     font-weight: 600;
     border-right: 1px solid var(--border);
     white-space: nowrap;
+  }
+  .tab1 .ref-link {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: var(--muted);
+    text-underline-offset: 3px;
+  }
+  .tab1 .ref-link:hover {
+    text-decoration-color: var(--fg);
+    text-decoration-style: solid;
   }
   .tab1 tbody tr.featured {
     background: #fff8df;
