@@ -30,15 +30,13 @@ function fmtCost(v: number | null) {
     <table class="mr-table">
       <thead>
         <tr>
-          <th scope="col" class="lbl-col">System</th>
+          <th scope="col" class="lbl-col" rowspan="2">System</th>
           {task_order.map((t) => (
-            <th scope="col" title={task_long[t]}>{t}</th>
+            <th scope="col" rowspan="2" title={task_long[t]}>{t}</th>
           ))}
-          <th scope="col" class="cost-col" colspan="2">Cost $/ep</th>
+          <th scope="col" class="cost-col cost-group" colspan="2">Cost $/ep</th>
         </tr>
         <tr class="sub-head">
-          <th></th>
-          {task_order.map(() => <th></th>)}
           <th class="cost-col">Ingest</th>
           <th class="cost-col">Inference</th>
         </tr>
@@ -54,7 +52,9 @@ function fmtCost(v: number | null) {
                 <th scope="row" class="sys-name">
                   {row.featured ? <span class="star">★</span> : null}
                   {row.system}
-                  <span class="sys-llm">{row.internalLLM}{row.subset ? " · 20 ep" : ""}</span>
+                  {(row.featured || row.subset) && (
+                    <span class="sys-llm">{row.internalLLM}{row.subset ? " · 20 ep" : ""}</span>
+                  )}
                 </th>
                 {task_order.map((t) => {
                   if (t === "Overall") {
@@ -76,13 +76,13 @@ function fmtCost(v: number | null) {
         ))}
         <tr class="avg-row">
           <th scope="row">{average.label}</th>
-          {task_order.map((t) =>
-            t === "Overall" ? (
-              <td class="overall">{fmtRate(average.overall)}</td>
-            ) : (
-              <td>{fmtRate(average.rates[t])}</td>
-            ),
-          )}
+          {task_order.map((t) => {
+            if (t === "Overall") {
+              return <td class="overall">{fmtRate(average.overall)}</td>;
+            }
+            const danger = t === "Cas" || t === "Abs";
+            return <td class={danger ? "danger" : ""}>{fmtRate(average.rates[t])}</td>;
+          })}
           <td class="cost-col">—</td>
           <td class="cost-col">—</td>
         </tr>
@@ -148,13 +148,21 @@ function fmtCost(v: number | null) {
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--muted);
-    border-bottom: 1px solid var(--border);
     padding-bottom: 8px;
+  }
+  /* Bottom rule lives only under the row containing tbody, not between thead rows */
+  .mr-table thead th[rowspan="2"] {
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .mr-table thead th.cost-group {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 4px;
   }
   .mr-table thead tr.sub-head th {
     border-bottom: 1px solid var(--border);
     padding-bottom: 4px;
-    padding-top: 0;
+    padding-top: 2px;
     font-size: 11px;
     text-transform: none;
   }
@@ -206,6 +214,10 @@ function fmtCost(v: number | null) {
     color: var(--muted);
     font-style: italic;
     font-size: 12px;
+  }
+  .mr-table tbody .avg-row td.danger {
+    color: #b94747;
+    font-weight: 700;
   }
   .mr-table tbody .avg-row th {
     text-align: left;
