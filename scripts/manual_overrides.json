@@ -87,7 +87,19 @@
       { "system": "karpathy", "session": 9, "text_contains": "Maintain regular communication with Seokjin Kang", "tags": [] },
 
       { "system": "mem0", "session": 3, "text_contains": "User inquires about best practices for managing packages with Karnex Pack", "tags": [] },
-      { "system": "mem0", "session": 6, "text_contains": "User was advised to optimize Dranith Stack usage by establishing a clear versioning strategy", "tags": [] }
+      { "system": "mem0", "session": 6, "text_contains": "User was advised to optimize Dranith Stack usage by establishing a clear versioning strategy", "tags": [] },
+
+      { "system": "bm25", "session": 11, "text_contains": "Here's an exact error log I want you to remember", "tags": ["ER"] },
+      { "system": "bm25", "session": 11, "text_contains": "ConnectionRefusedError: [Errno 111] Connection refused", "tags": ["ER"] },
+      { "system": "bm25", "session": 11, "text_contains": "Service crysthene-db-primary on port 5432 is not accepting", "tags": ["ER"] },
+      { "system": "bm25", "session": 11, "text_contains": "Last successful heartbeat was at 2024-03-15T08:23:41Z", "tags": ["ER"] },
+      { "system": "bm25", "session": 11, "text_contains": "Check firewall rules and verify that max_connections", "tags": ["ER"] },
+
+      { "system": "dense", "session": 11, "text_contains": "Here's an exact error log I want you to remember", "tags": ["ER"] },
+      { "system": "dense", "session": 11, "text_contains": "ConnectionRefusedError: [Errno 111] Connection refused", "tags": ["ER"] },
+      { "system": "dense", "session": 11, "text_contains": "Service crysthene-db-primary on port 5432 is not accepting", "tags": ["ER"] },
+      { "system": "dense", "session": 11, "text_contains": "Last successful heartbeat was at 2024-03-15T08:23:41Z", "tags": ["ER"] },
+      { "system": "dense", "session": 11, "text_contains": "Check firewall rules and verify that max_connections", "tags": ["ER"] }
     ],
 
     "before": {
