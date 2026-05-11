@@ -366,10 +366,11 @@ const probeAfter = episode.probe_after_idx;
       const removed = diff?.removed ?? [];
       const sysLabel = systemLabels[sys];
 
+      const modelTag = sysLabel.featured ? ` (${sysLabel.internalLLM})` : "";
       const header = `
         <div class="snap-head">
           <h4>Memory snapshot
-            <span class="snap-sub">${sysLabel.name} · after session ${idx}</span>
+            <span class="snap-sub">${sysLabel.name}${modelTag}</span>
           </h4>
           <div class="snap-controls">
             <button class="seg ${state.diffMode === "diff" ? "active" : ""}" data-diff-mode="diff">Diff-only</button>
