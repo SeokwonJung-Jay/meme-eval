@@ -129,13 +129,16 @@ function countGoldChars(snapshot, goldTokenSets) {
 }
 
 // Annotate each line with the set of task tags whose gold value matches it.
+// Each fact may carry multiple tags (e.g. cascade root → Cas + Abs).
 function annotateLines(lines, cumFactsWithTok) {
   return lines.map((text) => {
     if (!text) return { text, tags: [] };
     const tags = new Set();
     const lTok = tokenSet(text);
     for (const f of cumFactsWithTok) {
-      if (containment(f.tok, lTok) >= MATCH_THRESHOLD) tags.add(f.tag);
+      if (containment(f.tok, lTok) >= MATCH_THRESHOLD) {
+        for (const t of f.tags ?? []) tags.add(t);
+      }
     }
     return { text, tags: [...tags] };
   });
@@ -182,35 +185,51 @@ function writeText(path, text) {
 function main() {
   const ep = readJson(EPISODE_PATH);
 
-  // Entity → task tag map (drawn from after-questions, which covers all 6 tasks)
+  // Entity → set of task tags. Built from both before- and after-questions, plus
+  // the episode's cascade root (which influences every cascaded entity).
   const TAG_MAP_SHORT = {
     Exact: "ER", "Multi-hop": "Agg", "Multiple-update": "Tr",
     Deletion: "Del", "Cascade-D (1-hop)": "Cas", "Cascade-U (1-hop)": "Abs",
+    "Deletion (before delete)": "Del", "Exact (exact recall)": "ER",
     ER: "ER", Agg: "Agg", Tr: "Tr", Del: "Del", Cas: "Cas", Abs: "Abs",
   };
-  const entityToTask = {};
+  const entityToTask = {}; // entity -> Set<tag>
+  const addEntity = (entity, tag) => {
+    if (!entity || !tag) return;
+    if (!entityToTask[entity]) entityToTask[entity] = new Set();
+    entityToTask[entity].add(tag);
+  };
   for (const q of ep.after_questions?.questions ?? []) {
     const tag = TAG_MAP_SHORT[q.task_type] ?? q.task_type;
-    for (const e of q.entity ?? []) entityToTask[e] = tag;
+    for (const e of q.entity ?? []) addEntity(e, tag);
+  }
+  for (const q of ep.before_questions?.questions ?? []) {
+    const tag = TAG_MAP_SHORT[q.task_type] ?? q.task_type;
+    for (const e of q.entity ?? []) addEntity(e, tag);
+  }
+  // Cascade root entity (e.g., team_lead) flows into Cas (downstream) + Abs (upstream uncertainty).
+  if (ep.root) {
+    addEntity(ep.root, "Cas");
+    addEntity(ep.root, "Abs");
   }
 
-  // Build cumulative gold-fact list per session — each entry: {entity, value, tag, tok}.
+  // Build cumulative gold-fact list per session — only entities that map to at least one task tag.
   const cumFactsByIdx = [];
   const cumFacts = [];
   for (let i = 0; i < ep.sessions.length; i++) {
     const facts = ep.sessions[i].gold_facts ?? [];
     for (const f of facts) {
-      const tag = entityToTask[f.entity];
-      if (!tag) continue;
+      const tags = entityToTask[f.entity];
+      if (!tags || tags.size === 0) continue;
+      const tagList = [...tags];
       const vals = Array.isArray(f.value) ? f.value : [f.value];
       for (const v of vals) {
         if (!v) continue;
-        cumFacts.push({ entity: f.entity, value: v, tag, tok: tokenSet(v) });
+        cumFacts.push({ entity: f.entity, value: v, tags: tagList, tok: tokenSet(v) });
       }
     }
     cumFactsByIdx.push([...cumFacts]);
   }
-  // Token-only view used by countGoldChars
   const sessionGoldTokenSetsCumulative = cumFactsByIdx.map((arr) => arr.map((f) => f.tok));
 
   // Probe positions
@@ -232,13 +251,18 @@ function main() {
         role: t.role,
         content: t.content,
       })),
-      gold_facts: (sess.gold_facts ?? []).map((f) => ({
-        entity: f.entity,
-        value: f.value,
-        fact_text: f.fact_text,
-        conveyed_in_turn: f.conveyed_in_turn ?? null,
-        notes: f.notes ?? null,
-      })),
+      // Filter out distractor facts (entity not evaluated in any question).
+      // Cascade root (e.g., team_lead) is kept via entityToTask mapping above.
+      gold_facts: (sess.gold_facts ?? [])
+        .filter((f) => entityToTask[f.entity] && entityToTask[f.entity].size > 0)
+        .map((f) => ({
+          entity: f.entity,
+          value: f.value,
+          fact_text: f.fact_text,
+          conveyed_in_turn: f.conveyed_in_turn ?? null,
+          notes: f.notes ?? null,
+          tags: [...entityToTask[f.entity]],
+        })),
     };
   });
 
