@@ -3,6 +3,11 @@ import data from "../data/main_results.json";
 
 const { task_order, task_long, groups, average, best_per_task_main } = data;
 
+// Best Overall among main (non-subset) systems
+const mainRows = groups.flatMap((g) => g.rows.filter((r) => !r.subset));
+const bestOverallMain = Math.max(...mainRows.map((r) => r.overall));
+const bestOverallSystem = mainRows.find((r) => r.overall === bestOverallMain)?.system;
+
 function fmtRate(v: number) {
   return v.toFixed(2);
 }
@@ -28,6 +33,12 @@ function fmtCost(v: number | null) {
 
   <div class="mr-wrap">
     <table class="mr-table">
+      <colgroup>
+        <col /> {/* System */}
+        <col /> <col /> <col /> <col /> <col /> <col /> {/* ER Agg Tr Del Cas Abs */}
+        <col class="col-overall" /> {/* Overall */}
+        <col /> <col /> {/* Ingest Inference */}
+      </colgroup>
       <thead>
         <tr>
           <th scope="col" class="lbl-col" rowspan="2">System</th>
@@ -42,28 +53,47 @@ function fmtCost(v: number | null) {
         </tr>
       </thead>
       <tbody>
-        {groups.map((g) => (
+        {groups.map((g, gi) => (
           <>
+            {g.rows.some((r) => r.subset) && (
+              <tr class="avg-row">
+                <th scope="row">{average.label}</th>
+                {task_order.map((t) => {
+                  if (t === "Overall") {
+                    return <td class="overall">{fmtRate(average.overall)}</td>;
+                  }
+                  const danger = t === "Cas" || t === "Abs";
+                  return <td class={danger ? "danger" : ""}>{fmtRate(average.rates[t])}</td>;
+                })}
+                <td class="cost-col">—</td>
+                <td class="cost-col">—</td>
+              </tr>
+            )}
             <tr class="group-row">
               <td colspan={task_order.length + 3}><em>{g.label}</em></td>
             </tr>
             {g.rows.map((row) => (
-              <tr class={row.featured ? "row featured" : "row"}>
+              <tr class="row">
                 <th scope="row" class="sys-name">
-                  {row.featured ? <span class="star">★</span> : null}
                   {row.system}
-                  {(row.featured || row.subset) && (
+                  {row.subset && (
                     <span class="sys-llm">{row.internalLLM}{row.subset ? " · 20 ep" : ""}</span>
                   )}
                 </th>
                 {task_order.map((t) => {
                   if (t === "Overall") {
-                    return <td class="overall">{fmtRate(row.overall)}</td>;
+                    const isBestOverall = !row.subset && row.system === bestOverallSystem;
+                    return (
+                      <td class="overall">
+                        {isBestOverall ? <strong>{fmtRate(row.overall)}</strong> : fmtRate(row.overall)}
+                      </td>
+                    );
                   }
                   const v = row.rates[t];
                   const isBest = !row.subset && best_per_task_main[t] === row.system;
+                  const highlight = row.highlightDeps && (t === "Cas" || t === "Abs");
                   return (
-                    <td class={isBest ? "best" : ""}>
+                    <td class={[isBest ? "best" : "", highlight ? "success" : ""].join(" ").trim()}>
                       {isBest ? <strong>{fmtRate(v)}</strong> : fmtRate(v)}
                     </td>
                   );
@@ -74,18 +104,6 @@ function fmtCost(v: number | null) {
             ))}
           </>
         ))}
-        <tr class="avg-row">
-          <th scope="row">{average.label}</th>
-          {task_order.map((t) => {
-            if (t === "Overall") {
-              return <td class="overall">{fmtRate(average.overall)}</td>;
-            }
-            const danger = t === "Cas" || t === "Abs";
-            return <td class={danger ? "danger" : ""}>{fmtRate(average.rates[t])}</td>;
-          })}
-          <td class="cost-col">—</td>
-          <td class="cost-col">—</td>
-        </tr>
       </tbody>
     </table>
   </div>
@@ -134,7 +152,8 @@ function fmtCost(v: number | null) {
   }
   .mr-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     font-size: 13px;
   }
   .mr-table th,
@@ -192,11 +211,17 @@ function fmtCost(v: number | null) {
     color: #b48a1b;
     margin-right: 4px;
   }
+  .mr-table .col-overall {
+    background: #f7f7f1;
+  }
   .mr-table tbody .overall {
     font-weight: 700;
-    background: #f7f7f1;
-    border-left: 1px solid var(--border);
-    border-right: 1px solid var(--border);
+  }
+  /* Highlight Cas/Abs success for Opus closure row */
+  .mr-table tbody .row .success {
+    color: #1a7c4a;
+    font-weight: 700;
+    background: #e4f5ea;
   }
   .mr-table tbody .cost-col {
     font-variant-numeric: tabular-nums;

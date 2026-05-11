@@ -76,8 +76,8 @@
           "rates": {"ER": 0.60, "Agg": 0.80, "Tr": 0.20, "Del": 0.80, "Cas": 0.32, "Abs": 0.59},
           "overall": 0.55,
           "cost": {"ingest": 3.87, "inference": 0.66},
-          "featured": true,
-          "subset": true
+          "subset": true,
+          "highlightDeps": true
         }
       ]
     }
