@@ -22,7 +22,7 @@ Probe before / after session: 13 / 16
 | 8 | filler | 65 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 9 | evidence | 13 | 0 | 1 | 2 | 0 | 1 | 1 | 0 |
 | 10 | filler | 180 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 11 | evidence | 17 | 0 | 0 | 0 | 0 | 3 | 2 | 0 |
+| 11 | evidence | 17 | 0 | 0 | 0 | 0 | 2 | 1 | 0 |
 | 12 | filler | 76 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 13 | probe-before | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 14 | evidence | 13 | 0 | 0 | 0 | 1 | 1 | 1 | 0 |
@@ -44,7 +44,7 @@ Probe before / after session: 13 / 16
 | 8 | filler | 65 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 9 | evidence | 13 | 0 | 1 | 2 | 0 | 1 | 1 | 0 |
 | 10 | filler | 180 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 11 | evidence | 17 | 0 | 0 | 0 | 0 | 3 | 2 | 0 |
+| 11 | evidence | 17 | 0 | 0 | 0 | 0 | 2 | 1 | 0 |
 | 12 | filler | 76 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 13 | probe-before | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 14 | evidence | 13 | 0 | 0 | 0 | 1 | 1 | 1 | 0 |
@@ -64,9 +64,9 @@ Probe before / after session: 13 / 16
 | 6 | evidence | 4 | 0 | 1 | 1 | 1 | 0 | 0 | 0 |
 | 7 | filler | 10 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 8 | filler | 5 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 9 | evidence | 5 | 0 | 1 | 2 | 0 | 2 | 2 | 0 |
+| 9 | evidence | 5 | 0 | 1 | 1 | 0 | 2 | 2 | 0 |
 | 10 | filler | 7 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 11 | evidence | 3 | 0 | 0 | 0 | 0 | 3 | 2 | 0 |
+| 11 | evidence | 3 | 0 | 0 | 0 | 0 | 2 | 1 | 0 |
 | 12 | filler | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 13 | probe-before | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 14 | evidence | 2 | 0 | 0 | 0 | 0 | 1 | 1 | 0 |
@@ -88,12 +88,12 @@ Probe before / after session: 13 / 16
 | 8 | filler | 23 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 9 | evidence | 28 | 0 | 0 | 3 | 0 | 2 | 2 | 0 |
 | 10 | filler | 29 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 11 | evidence | 25 | 1 | 0 | 0 | 0 | 2 | 2 | 0 |
+| 11 | evidence | 25 | 1 | 0 | 0 | 0 | 1 | 1 | 0 |
 | 12 | filler | 29 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 13 | probe-before | 1890 | 0 | 0 | 32 | 0 | 4 | 4 | 0 |
+| 13 | probe-before | 1890 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 14 | evidence | 23 | 0 | 0 | 0 | 1 | 2 | 2 | 0 |
 | 15 | filler | 33 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 16 | probe-after | 367 | 0 | 0 | 0 | 0 | 1 | 1 | 0 |
+| 16 | probe-after | 367 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
 ### MD-flat (md_file)
 
@@ -108,9 +108,9 @@ Probe before / after session: 13 / 16
 | 6 | evidence | 4 | 0 | 1 | 1 | 1 | 0 | 0 | 0 |
 | 7 | filler | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 8 | filler | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 9 | evidence | 4 | 0 | 1 | 2 | 0 | 1 | 1 | 0 |
+| 9 | evidence | 4 | 0 | 1 | 1 | 0 | 1 | 1 | 0 |
 | 10 | filler | 5 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 11 | evidence | 3 | 1 | 0 | 0 | 0 | 2 | 2 | 0 |
+| 11 | evidence | 3 | 1 | 0 | 0 | 0 | 1 | 1 | 0 |
 | 12 | filler | 5 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 13 | probe-before | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 14 | evidence | 3 | 0 | 0 | 0 | 0 | 1 | 1 | 0 |
@@ -130,9 +130,9 @@ Probe before / after session: 13 / 16
 | 6 | evidence | 8 | 0 | 1 | 2 | 1 | 0 | 0 | 0 |
 | 7 | filler | 5 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 8 | filler | 9 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 9 | evidence | 5 | 0 | 1 | 2 | 0 | 1 | 1 | 0 |
+| 9 | evidence | 5 | 0 | 1 | 1 | 0 | 1 | 1 | 0 |
 | 10 | filler | 4 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 11 | evidence | 3 | 1 | 0 | 0 | 0 | 2 | 2 | 0 |
+| 11 | evidence | 3 | 1 | 0 | 0 | 0 | 1 | 1 | 0 |
 | 12 | filler | 9 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 13 | probe-before | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 14 | evidence | 4 | 0 | 0 | 0 | 1 | 1 | 1 | 0 |
@@ -154,10 +154,10 @@ Probe before / after session: 13 / 16
 | 8 | filler | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 9 | evidence | 5 | 0 | 1 | 1 | 0 | 1 | 1 | 1 |
 | 10 | filler | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 11 | evidence | 2 | 0 | 0 | 0 | 0 | 2 | 2 | 0 |
+| 11 | evidence | 2 | 0 | 0 | 0 | 0 | 1 | 1 | 0 |
 | 12 | filler | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 13 | probe-before | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 14 | evidence | 5 | 0 | 0 | 0 | 0 | 2 | 3 | 4 |
+| 14 | evidence | 5 | 0 | 0 | 0 | 0 | 1 | 1 | 4 |
 | 15 | filler | 2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | 16 | probe-after | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
@@ -179,12 +179,12 @@ Probe before / after session: 13 / 16
     - [s14] `User: The log drain endpoint is stream.velturis.io/aurora. Please delete that from your memory. Any tips or things to watch out for?`
 - **Cas** (3 shown):
     - [s9] `User: The team lead is Seokjin Kang. He's been guiding us through the transition and ensuring everyone is on the same page. How do you usually keep communicatio`
-    - [s11] `User: Code reviews go to Seoyun Choi — Seokjin Kang assigned it; if the team lead changes, this assignment would change. Any tips or things to watch out for?`
     - [s11] `User: The weekly report recipient is Hyunwoo Nam — Seokjin Kang assigned it; if the team lead changes, this assignment would change. Any tips or things to watch`
+    - [s11] `User: If the team lead changes, the weekly report recipient will be James Lee. Any tips or things to watch out for?`
 - **Abs** (3 shown):
     - [s9] `User: The team lead is Seokjin Kang. He's been guiding us through the transition and ensuring everyone is on the same page. How do you usually keep communicatio`
     - [s11] `User: Code reviews go to Seoyun Choi — Seokjin Kang assigned it; if the team lead changes, this assignment would change. Any tips or things to watch out for?`
-    - [s11] `User: The weekly report recipient is Hyunwoo Nam — Seokjin Kang assigned it; if the team lead changes, this assignment would change. Any tips or things to watch`
+    - [s14] `User: Jihoon Ryu is our new team lead. Any tips or things to watch out for?`
 
 ### text-emb-3-small
 
@@ -202,12 +202,12 @@ Probe before / after session: 13 / 16
     - [s14] `User: The log drain endpoint is stream.velturis.io/aurora. Please delete that from your memory. Any tips or things to watch out for?`
 - **Cas** (3 shown):
     - [s9] `User: The team lead is Seokjin Kang. He's been guiding us through the transition and ensuring everyone is on the same page. How do you usually keep communicatio`
-    - [s11] `User: Code reviews go to Seoyun Choi — Seokjin Kang assigned it; if the team lead changes, this assignment would change. Any tips or things to watch out for?`
     - [s11] `User: The weekly report recipient is Hyunwoo Nam — Seokjin Kang assigned it; if the team lead changes, this assignment would change. Any tips or things to watch`
+    - [s11] `User: If the team lead changes, the weekly report recipient will be James Lee. Any tips or things to watch out for?`
 - **Abs** (3 shown):
     - [s9] `User: The team lead is Seokjin Kang. He's been guiding us through the transition and ensuring everyone is on the same page. How do you usually keep communicatio`
     - [s11] `User: Code reviews go to Seoyun Choi — Seokjin Kang assigned it; if the team lead changes, this assignment would change. Any tips or things to watch out for?`
-    - [s11] `User: The weekly report recipient is Hyunwoo Nam — Seokjin Kang assigned it; if the team lead changes, this assignment would change. Any tips or things to watch`
+    - [s14] `User: Jihoon Ryu is our new team lead. Any tips or things to watch out for?`
 
 ### Graphiti
 
@@ -215,10 +215,9 @@ Probe before / after session: 13 / 16
 - **Agg** (2 shown):
     - [s6] `User's production alerts are sent to #aurora-pager channel to monitor production events.`
     - [s9] `User references the incident runbook located at wiki.aurora.dev/incident-response as a useful resource for handling issues.`
-- **Tr** (3 shown):
+- **Tr** (2 shown):
     - [s6] `User manages project dependencies using Dranith Stack package manager.`
     - [s9] `User reports that the team's package manager has switched to Synthari Modules during the project transition.`
-    - [s9] `Seokjin Kang is the team lead guiding the User and team members through the transition to Synthari Modules.`
 - **Del** (1 shown):
     - [s6] `User's production logs drain to stream.velturis.io/aurora for monitoring and tracking.`
 - **Cas** (3 shown):
@@ -244,7 +243,7 @@ Probe before / after session: 13 / 16
 - **Cas** (3 shown):
     - [s9] `- User introduced the team lead, Seokjin Kang, and asked for tips on maintaining communication during transitions.`
     - [s9] `- Maintain regular communication with Seokjin Kang to support the transition.`
-    - [s11] `- Code reviews are assigned to Seoyun Choi by Seokjin Kang; this assignment changes if the team lead changes. `
+    - [s11] `- Weekly report recipient is Hyunwoo Nam, assigned by Seokjin Kang; changes to James Lee if the team lead changes. `
 - **Abs** (3 shown):
     - [s9] `- User introduced the team lead, Seokjin Kang, and asked for tips on maintaining communication during transitions.`
     - [s9] `- Maintain regular communication with Seokjin Kang to support the transition.`
@@ -266,12 +265,12 @@ Probe before / after session: 13 / 16
     - [s6] `[2023/03/07] Logs drain to stream.velturis.io/aurora; user interested in log data structuring for easier analysis.`
 - **Cas** (3 shown):
     - [s9] `[2023/03/10] Team lead is Seokjin Kang, guiding the team through the transition to Synthari Modules.`
-    - [s11] `[2023/03/13] Code reviews go to Seoyun Choi, assigned by Seokjin Kang; assignment changes if team lead changes.`
     - [s11] `[2023/03/13] Weekly report recipient is Hyunwoo Nam, assigned by Seokjin Kang; changes to James Lee if team lead changes.`
+    - [s14] `[2023/03/17] Jihoon Ryu is the new team lead.`
 - **Abs** (3 shown):
     - [s9] `[2023/03/10] Team lead is Seokjin Kang, guiding the team through the transition to Synthari Modules.`
     - [s11] `[2023/03/13] Code reviews go to Seoyun Choi, assigned by Seokjin Kang; assignment changes if team lead changes.`
-    - [s11] `[2023/03/13] Weekly report recipient is Hyunwoo Nam, assigned by Seokjin Kang; changes to James Lee if team lead changes.`
+    - [s14] `[2023/03/17] Jihoon Ryu is the new team lead.`
 
 ### Mem0
 
@@ -291,11 +290,11 @@ Probe before / after session: 13 / 16
 - **Cas** (3 shown):
     - [s9] `[91b2741c] User's team lead is Seokjin Kang, who is guiding the team through the transition to Synthari Modules and ensuring clear communication`
     - [s11] `[b8adeee7] User's weekly report recipient is Hyunwoo Nam as assigned by team lead Seokjin Kang, with the recipient changing to James Lee if the team lead change`
-    - [s11] `[de59d181] User's code reviews are assigned to Seoyun Choi by team lead Seokjin Kang, and this assignment will change if the team lead changes`
+    - [s14] `[187c4f82] User's new team lead is Jihoon Ryu as of April 21, 2026, and User is seeking tips or things to watch out for with this leadership change`
 - **Abs** (3 shown):
     - [s9] `[91b2741c] User's team lead is Seokjin Kang, who is guiding the team through the transition to Synthari Modules and ensuring clear communication`
-    - [s11] `[b8adeee7] User's weekly report recipient is Hyunwoo Nam as assigned by team lead Seokjin Kang, with the recipient changing to James Lee if the team lead change`
     - [s11] `[de59d181] User's code reviews are assigned to Seoyun Choi by team lead Seokjin Kang, and this assignment will change if the team lead changes`
+    - [s14] `[187c4f82] User's new team lead is Jihoon Ryu as of April 21, 2026, and User is seeking tips or things to watch out for with this leadership change`
 
 ### MD-flat × Opus 4.7
 
@@ -312,12 +311,12 @@ Probe before / after session: 13 / 16
     - [s6] `[2023/03/07] Logs drain to: stream.velturis.io/aurora`
 - **Cas** (3 shown):
     - [s9] `[2023/03/10] Team lead: Seokjin Kang`
-    - [s11] `[2023/03/13] Code reviews go to Seoyun Choi (assigned by Seokjin Kang; tied to team lead)`
     - [s11] `[2023/03/13] Weekly report recipient: Hyunwoo Nam (assigned by Seokjin Kang; tied to team lead); if team lead changes, recipient becomes James Lee`
+    - [s14] `[2023/03/17] Team lead: Jihoon Ryu (updated from Seokjin Kang)`
 - **Abs** (3 shown):
     - [s9] `[2023/03/10] Team lead: Seokjin Kang`
     - [s11] `[2023/03/13] Code reviews go to Seoyun Choi (assigned by Seokjin Kang; tied to team lead)`
-    - [s11] `[2023/03/13] Weekly report recipient: Hyunwoo Nam (assigned by Seokjin Kang; tied to team lead); if team lead changes, recipient becomes James Lee`
+    - [s14] `[2023/03/17] Team lead: Jihoon Ryu (updated from Seokjin Kang)`
 
 ## 3. Pipeline-stage outcomes per system × question
 
@@ -339,7 +338,7 @@ Probe before / after session: 13 / 16
 | Graphiti | ER | ✗ | ✗ | ✗ | ✗ | encoding |
 | Karpathy Wiki | Cas | ✓ | ✓ | ✓ | ✓ | _passed_ |
 | Karpathy Wiki | Abs | ✓ | ✓ | ✗ | ✗ | retrieval |
-| Karpathy Wiki | Del | ✗ | ✗ | ✗ | ✗ | encoding |
+| Karpathy Wiki | Del | ✓ | ✓ | ✗ | ✗ | retrieval |
 | Karpathy Wiki | ER | ✓ | ✓ | ✗ | ✗ | retrieval |
 | MD-flat | Cas | ✓ | ✓ | ✓ | ✓ | _passed_ |
 | MD-flat | Abs | ✓ | ✓ | ✓ | ✓ | _passed_ |
@@ -358,46 +357,46 @@ Probe before / after session: 13 / 16
 
 | system | task | encoded | maintained | retrieved | answered | failure_stage |
 | --- | --- | --- | --- | --- | --- | --- |
-| BM25 | Tr | ✓ | ✓ | ✓ | ✗ | answering |
-| BM25 | Cas | ✓ | ✓ | ✓ | ✗ | answering |
-| BM25 | Abs | ✓ | ✓ | ✓ | ✗ | answering |
+| BM25 | Tr | ✓ | ✓ | ✗ | ✗ | retrieval |
+| BM25 | Cas | ✓ | ✓ | ✗ | ✗ | retrieval |
+| BM25 | Abs | ✓ | ✓ | ✗ | ✗ | retrieval |
 | BM25 | Del | ✓ | ✓ | ✓ | ✓ | _passed_ |
-| BM25 | Agg | ✓ | ✓ | ✓ | ✗ | answering |
+| BM25 | Agg | ✓ | ✓ | ✗ | ✗ | retrieval |
 | BM25 | ER | ✓ | ✓ | ✓ | ✓ | _passed_ |
 | text-emb-3-small | Tr | ✓ | ✓ | ✓ | ✓ | _passed_ |
 | text-emb-3-small | Cas | ✓ | ✓ | ✓ | ✗ | answering |
 | text-emb-3-small | Abs | ✓ | ✓ | ✓ | ✗ | answering |
 | text-emb-3-small | Del | ✓ | ✓ | ✓ | ✓ | _passed_ |
-| text-emb-3-small | Agg | ✓ | ✓ | ✓ | ✗ | answering |
+| text-emb-3-small | Agg | ✓ | ✓ | ✗ | ✗ | retrieval |
 | text-emb-3-small | ER | ✓ | ✓ | ✓ | ✓ | _passed_ |
-| Graphiti | Tr | ✓ | ✓ | ✓ | ✗ | answering |
-| Graphiti | Cas | ✓ | ✓ | ✓ | ✗ | answering |
-| Graphiti | Abs | ✓ | ✓ | ✓ | ✗ | answering |
+| Graphiti | Tr | ✗ | ✗ | ✗ | ✗ | encoding |
+| Graphiti | Cas | ✓ | ✓ | ✗ | ✗ | retrieval |
+| Graphiti | Abs | ✓ | ✓ | ✗ | ✗ | retrieval |
 | Graphiti | Del | ✗ | ✗ | ✗ | ✗ | encoding |
 | Graphiti | Agg | ✓ | ✓ | ✓ | ✗ | answering |
 | Graphiti | ER | ✗ | ✗ | ✗ | ✗ | encoding |
 | Karpathy Wiki | Tr | ✓ | ✓ | ✓ | ✓ | _passed_ |
-| Karpathy Wiki | Cas | ✓ | ✓ | ✓ | ✗ | answering |
+| Karpathy Wiki | Cas | ✓ | ✓ | ✗ | ✗ | retrieval |
 | Karpathy Wiki | Abs | ✓ | ✓ | ✗ | ✗ | retrieval |
 | Karpathy Wiki | Del | ✗ | ✗ | ✗ | ✗ | encoding |
-| Karpathy Wiki | Agg | ✗ | ✗ | ✗ | ✗ | encoding |
+| Karpathy Wiki | Agg | ✓ | ✗ | ✗ | ✗ | maintenance |
 | Karpathy Wiki | ER | ✓ | ✓ | ✗ | ✗ | retrieval |
 | MD-flat | Tr | ✓ | ✓ | ✓ | ✓ | _passed_ |
-| MD-flat | Cas | ✓ | ✓ | ✓ | ✗ | answering |
-| MD-flat | Abs | ✓ | ✓ | ✓ | ✗ | answering |
+| MD-flat | Cas | ✓ | ✓ | ✗ | ✗ | retrieval |
+| MD-flat | Abs | ✓ | ✓ | ✗ | ✗ | retrieval |
 | MD-flat | Del | ✗ | ✗ | ✗ | ✗ | encoding |
-| MD-flat | Agg | ✓ | ✓ | ✓ | ✗ | answering |
+| MD-flat | Agg | ✓ | ✓ | ✗ | ✗ | retrieval |
 | MD-flat | ER | ✓ | ✓ | ✓ | ✓ | _passed_ |
 | Mem0 | Tr | ✓ | ✓ | ✓ | ✓ | _passed_ |
 | Mem0 | Cas | ✓ | ✓ | ✓ | ✗ | answering |
-| Mem0 | Abs | ✓ | ✓ | ✓ | ✗ | answering |
+| Mem0 | Abs | ✓ | ✓ | ✗ | ✗ | retrieval |
 | Mem0 | Del | ✗ | ✗ | ✗ | ✗ | encoding |
 | Mem0 | Agg | ✓ | ✓ | ✓ | ✗ | answering |
 | Mem0 | ER | ✓ | ✓ | ✓ | ✓ | _passed_ |
-| MD-flat × Opus 4.7 | Tr | ✓ | ✓ | ✓ | ✗ | answering |
+| MD-flat × Opus 4.7 | Tr | ✓ | ✗ | ✗ | ✗ | maintenance |
 | MD-flat × Opus 4.7 | Cas | ✓ | ✓ | ✓ | ✓ | _passed_ |
 | MD-flat × Opus 4.7 | Abs | ✓ | ✓ | ✓ | ✗ | answering |
-| MD-flat × Opus 4.7 | Del | ✗ | ✗ | ✗ | ✓ | encoding |
+| MD-flat × Opus 4.7 | Del | ✓ | ✓ | ✓ | ✓ | _passed_ |
 | MD-flat × Opus 4.7 | Agg | ✓ | ✓ | ✓ | ✓ | _passed_ |
 | MD-flat × Opus 4.7 | ER | ✗ | ✗ | ✗ | ✗ | encoding |
 

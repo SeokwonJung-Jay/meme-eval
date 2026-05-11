@@ -1,17 +1,99 @@
 {
-  "_format": "episode → phase → task → system → {encoded, maintained, retrieved, answered, note?}. Any missing booleans fall back to the algorithmic result.",
-  "_source": "Hand-judged from retrieved_context + probe-time snapshots + paper §4.3 (Figure 4 + per-system failure mode write-up).",
+  "_format": "episode → phase → task → system → {encoded, maintained, retrieved, answered, note?}.  Any missing boolean falls back to the algorithmic result.",
+  "_source": "Hand-judged from retrieved_context files + per-system probe-time snapshots + paper §4.3 (Figure 4 case study + per-system failure write-up).  Criteria: Encoded = relevant info ever in store before probe; Maintained = signal present in probe-time snapshot (for Del, signal = deletion record OR absence with correct answer); Retrieved = retrieved_context contains the full answer-relevant signal (for Cas/Abs: change event AND propagated value/uncertainty; for Tr: all historical values; for Agg: all entity values; for ER: verbatim text); Answered = u_pass.",
 
   "sw_033": {
     "after": {
       "Cas": {
-        "bm25":         { "encoded": true, "maintained": true, "retrieved": false, "answered": false, "note": "paper §4.3: BM25 — change event is below the top-k cutoff" },
-        "dense":        { "encoded": true, "maintained": true, "retrieved": true,  "answered": false, "note": "paper §4.3: text-embedding-3-small — change event in retrieved context, answering LLM still reports pre-change value" },
-        "graphiti":     { "encoded": true, "maintained": true, "retrieved": false, "answered": false, "note": "paper §4.3 / Figure 4: Graphiti — graph search surfaces rule + pre-change value; change-event edge falls below top-k" },
-        "karpathy":     { "encoded": true, "maintained": true, "retrieved": false, "answered": false, "note": "paper §4.3 / Figure 4: Karpathy Wiki — agent navigates to rule + pre-change source, never opens the daily log holding the change event" },
-        "md_file":      { "encoded": true, "maintained": true, "retrieved": false, "answered": false, "note": "paper §4.3: MD-flat — change event never opened by the tool-use loop" },
-        "mem0":         { "encoded": true, "maintained": true, "retrieved": true,  "answered": false, "note": "paper §4.3: Mem0 — change event in retrieved context, answering LLM still reports pre-change value" },
-        "md_file_opus": { "encoded": true, "maintained": true, "retrieved": true,  "answered": true,  "note": "paper §4.3 / Figure 4: MD-flat × Opus 4.7 — Opus propagates the cascade rule into the store at ingest; retriever surfaces the propagated value directly" }
+        "bm25":         { "encoded": true, "maintained": true,  "retrieved": false, "answered": false, "note": "paper §4.3: BM25 — change event is below the top-k cutoff" },
+        "dense":        { "encoded": true, "maintained": true,  "retrieved": true,  "answered": false, "note": "paper §4.3: text-embedding-3-small — change event in retrieved context, answering LLM still reports pre-change value" },
+        "graphiti":     { "encoded": true, "maintained": true,  "retrieved": false, "answered": false, "note": "paper §4.3 / Figure 4: graph search surfaces rule + pre-change value; change-event edge falls below top-k" },
+        "karpathy":     { "encoded": true, "maintained": true,  "retrieved": false, "answered": false, "note": "paper §4.3 / Figure 4: agent navigates to rule + pre-change source, never opens the daily log holding the change event" },
+        "md_file":      { "encoded": true, "maintained": true,  "retrieved": false, "answered": false, "note": "paper §4.3: change event never opened by the tool-use loop" },
+        "mem0":         { "encoded": true, "maintained": true,  "retrieved": true,  "answered": false, "note": "paper §4.3: Mem0 — change event in retrieved context, answering LLM still reports pre-change value" },
+        "md_file_opus": { "encoded": true, "maintained": true,  "retrieved": true,  "answered": true,  "note": "paper §4.3 / Figure 4: MD-flat × Opus 4.7 — Opus propagates the cascade rule into the store at ingest; retriever surfaces the propagated value directly" }
+      },
+
+      "Abs": {
+        "bm25":         { "encoded": true, "maintained": true,  "retrieved": false, "answered": false, "note": "retrieved_context has no Jihoon Ryu mention — change event below top-k; only filler noise surfaced" },
+        "dense":        { "encoded": true, "maintained": true,  "retrieved": true,  "answered": false, "note": "change event ('Jihoon Ryu is our new team lead') surfaced; LLM still reports pre-change reviewer instead of marking uncertain" },
+        "graphiti":     { "encoded": true, "maintained": true,  "retrieved": false, "answered": false, "note": "graph edges surface cascade rule + pre-change reviewer + Seokjin Kang as team lead; Jihoon Ryu edge not in top-k" },
+        "karpathy":     { "encoded": true, "maintained": true,  "retrieved": false, "answered": false, "note": "wiki article on code-review policy retrieved, but daily log with change event never opened" },
+        "md_file":      { "encoded": true, "maintained": true,  "retrieved": false, "answered": false, "note": "only the rule line retrieved; change-event line not surfaced" },
+        "mem0":         { "encoded": true, "maintained": true,  "retrieved": false, "answered": false, "note": "retrieved chunks list rule + Seokjin Kang as team lead; Jihoon Ryu fact below top-k for the Abs query" },
+        "md_file_opus": { "encoded": true, "maintained": true,  "retrieved": true,  "answered": false, "note": "rule, change event (Jihoon Ryu), and tied-to-team-lead role all surfaced; LLM still answers with pre-change reviewer rather than expressing uncertainty" }
+      },
+
+      "Tr": {
+        "bm25":         { "encoded": true,  "maintained": true,  "retrieved": false, "answered": false, "note": "snapshot retains the raw 'Karnex Pack' utterance, but only Dranith/Synthari chunks make it into the top-k retrieval window" },
+        "dense":        { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "all three historical values surfaced via embedding retrieval" },
+        "graphiti":     { "encoded": false, "maintained": false, "retrieved": false, "answered": false, "note": "Graphiti consolidates package_manager to the latest value at ingest — Karnex Pack never enters the graph as a retained edge" },
+        "karpathy":     { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "wiki concept article preserves the full Karnex → Dranith → Synthari sequence" },
+        "md_file":      { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "MD-flat lists each transition as a separate line, all three values retained and surfaced" },
+        "mem0":         { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "mem0 keeps the older transition entries as separate facts; all three surfaced" },
+        "md_file_opus": { "encoded": true,  "maintained": false, "retrieved": false, "answered": false, "note": "Opus overwrites the package_manager value in place at each update (Karnex Pack removed when Dranith arrived) — earlier history lost from store; matches paper's note that MD-flat × Opus degrades Tracking" }
+      },
+
+      "Del": {
+        "bm25":         { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "raw chunk retention preserves the explicit 'Please delete that from your memory' utterance; surfaced at query time" },
+        "dense":        { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "raw chunk retention surfaces the deletion utterance" },
+        "graphiti":     { "encoded": false, "maintained": false, "retrieved": false, "answered": false, "note": "graphiti's ingest at session 14 only adds Jihoon Ryu / #aurora-core edges; the deletion intent never becomes an edge" },
+        "karpathy":     { "encoded": false, "maintained": false, "retrieved": false, "answered": false, "note": "no entry in karpathy's wiki or daily log records the deletion of log_drain_endpoint" },
+        "md_file":      { "encoded": false, "maintained": false, "retrieved": false, "answered": false, "note": "MD-flat rewrites memory.md without removing the log_drain line and without adding a deletion marker" },
+        "mem0":         { "encoded": false, "maintained": false, "retrieved": false, "answered": false, "note": "mem0's fact decomposition keeps the original log_drain fact but writes no deletion event" },
+        "md_file_opus": { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "Opus performs the deletion in place: log_drain_endpoint is absent from the probe-time store, retrieval correctly returns no relevant facts, and the answering LLM responds with 'no information'" }
+      },
+
+      "Agg": {
+        "bm25":         { "encoded": true,  "maintained": true,  "retrieved": false, "answered": false, "note": "retrieved_context covers oncall+runbook chunks but the #aurora-pager chunk falls below top-k; answer cannot include all three entities" },
+        "dense":        { "encoded": true,  "maintained": true,  "retrieved": false, "answered": false, "note": "similar partial coverage — pager chunk not in top-k" },
+        "graphiti":     { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": false, "note": "all three entity edges encoded; retrieval surfaces them but the answering LLM omits one in the final reply" },
+        "karpathy":     { "encoded": true,  "maintained": false, "retrieved": false, "answered": false, "note": "wiki article rewrite keeps oncall_rotation but loses #aurora-pager and the runbook URL from the surfaced article" },
+        "md_file":      { "encoded": true,  "maintained": true,  "retrieved": false, "answered": false, "note": "store retains all three lines; the answering loop only opens the oncall and runbook lines, missing #aurora-pager" },
+        "mem0":         { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": false, "note": "all three facts encoded and surfaced via retrieval; LLM still produces an incomplete answer" },
+        "md_file_opus": { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "Opus consolidates the three Agg facts into a single coherent block; retrieval + answering succeed" }
+      },
+
+      "ER": {
+        "bm25":         { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "verbatim raw chunks preserved end-to-end" },
+        "dense":        { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "verbatim raw chunks preserved end-to-end" },
+        "graphiti":     { "encoded": false, "maintained": false, "retrieved": false, "answered": false, "note": "graphiti decomposes free text into typed edges; the multi-line error_log payload never enters the graph" },
+        "karpathy":     { "encoded": true,  "maintained": true,  "retrieved": false, "answered": false, "note": "the error_log is written into a daily log file, but the wiki article retrieved at query time does not contain it" },
+        "md_file":      { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "MD-flat retains the multi-line error_log verbatim in memory.md and surfaces it" },
+        "mem0":         { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "mem0 stores the verbatim payload as one fact with the full text" },
+        "md_file_opus": { "encoded": false, "maintained": false, "retrieved": false, "answered": false, "note": "Opus rewrites the multi-line error_log into a short paraphrase at ingest, losing verbatim fidelity; matches paper's note that MD-flat × Opus degrades Exact Recall" }
+      }
+    },
+
+    "before": {
+      "Cas": {
+        "bm25":         { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "pre-change Hyunwoo Nam present in raw chunks and surfaced" },
+        "dense":        { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "pre-change value retrieved successfully" },
+        "graphiti":     { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "ASSIGNS_WEEKLY_REPORT_TO edge to Hyunwoo Nam retrieved" },
+        "karpathy":     { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "wiki concept article carries the pre-change recipient" },
+        "md_file":      { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "single MD line retrieves cleanly" },
+        "mem0":         { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "fact retrieved with high score" },
+        "md_file_opus": { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "store has the pre-change value plus the propagation rule" }
+      },
+
+      "Abs": {
+        "bm25":         { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "Seoyun Choi present and retrieved" },
+        "dense":        { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "pre-change reviewer retrieved successfully" },
+        "graphiti":     { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "ASSIGNS_CODE_REVIEWS_TO edge retrieved" },
+        "karpathy":     { "encoded": true,  "maintained": true,  "retrieved": false, "answered": false, "note": "wiki page on code-review policy retrieved but it does not carry the specific reviewer name; daily log not opened" },
+        "md_file":      { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "single MD line retrieves cleanly" },
+        "mem0":         { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "fact retrieved with high score" },
+        "md_file_opus": { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "MD-flat line carries pre-change reviewer" }
+      },
+
+      "Del": {
+        "bm25":         { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "log_drain endpoint present in raw chunks at probe-before; question asks for the current value, which is still stream.velturis.io/aurora before session 14" },
+        "dense":        { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "retrieved cleanly" },
+        "graphiti":     { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "DRAINS_LOGS_TO edge present" },
+        "karpathy":     { "encoded": true,  "maintained": true,  "retrieved": false, "answered": false, "note": "log_drain is recorded in karpathy's wiki but the query agent did not open the relevant concept page" },
+        "md_file":      { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "retrieved cleanly" },
+        "mem0":         { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "fact retrieved with score 0.85" },
+        "md_file_opus": { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "endpoint still present in store at probe-before" }
       }
     }
   }
