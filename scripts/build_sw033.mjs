@@ -230,12 +230,12 @@ function main() {
     };
   }
 
-  // Friendly labels for systems
+  // Friendly labels for systems — kept in sync with paper Table 2.
   const systemLabels = {
     bm25: { name: "BM25", internalLLM: "gpt-4.1-mini", featured: false },
-    dense: { name: "Dense", internalLLM: "gpt-4.1-mini", featured: false },
+    dense: { name: "text-emb-3-small", internalLLM: "gpt-4.1-mini", featured: false },
     graphiti: { name: "Graphiti", internalLLM: "gpt-4.1-mini", featured: false },
-    karpathy: { name: "Karpathy", internalLLM: "gpt-4.1-mini", featured: false },
+    karpathy: { name: "Karpathy Wiki", internalLLM: "gpt-4.1-mini", featured: false },
     md_file: { name: "MD-flat", internalLLM: "gpt-4.1-mini", featured: false },
     mem0: { name: "Mem0", internalLLM: "gpt-4.1-mini", featured: false },
     md_file_opus: {
