@@ -129,18 +129,24 @@ function countGoldChars(snapshot, goldTokenSets) {
 }
 
 // Annotate each line with the set of task tags whose gold value matches it.
-// Each fact may carry multiple tags (e.g. cascade root → Cas + Abs).
-function annotateLines(lines, cumFactsWithTok) {
+// Each line is assigned the tags from the SINGLE best-matching fact, where the
+// score is `containment(value_tok, line_tok) + entityName_bonus`. This prevents
+// e.g. a "team_lead is X, transitioning to Synthari Modules" line from picking
+// up package_manager's [Tr] just because the rival fact's value also appears.
+function annotateLines(lines, factPool) {
   return lines.map((text) => {
     if (!text) return { text, tags: [] };
-    const tags = new Set();
     const lTok = tokenSet(text);
-    for (const f of cumFactsWithTok) {
-      if (containment(f.tok, lTok) >= MATCH_THRESHOLD) {
-        for (const t of f.tags ?? []) tags.add(t);
-      }
+    let best = { score: 0, tags: [] };
+    for (const f of factPool) {
+      const valScore = containment(f.tok, lTok);
+      if (valScore < MATCH_THRESHOLD) continue;
+      const entityTok = tokenSet((f.entity || "").replace(/_/g, " "));
+      const entityHit = [...entityTok].some((t) => lTok.has(t)) ? 0.6 : 0;
+      const score = valScore + entityHit;
+      if (score > best.score) best = { score, tags: f.tags ?? [] };
     }
-    return { text, tags: [...tags] };
+    return { text, tags: best.tags };
   });
 }
 

@@ -1154,17 +1154,19 @@ const probeAfter = episode.probe_after_idx;
   .snap-block .ln { display: block; padding: 1px 4px; border-radius: 3px; }
   .snap-block .ln.added { background: #e4f5ea; color: #155a35; }
   .snap-block .ln.removed { background: #fbeaea; color: #8b2828; }
-  /* Task-tag chips inline on annotated diff lines */
-  .snap-block .ln-chip {
+  /* Task-tag chips (unified across Gold facts card and snapshot diff) */
+  .ln-chip {
     display: inline-block;
     font-size: 9px;
     font-weight: 800;
     letter-spacing: 0.04em;
-    padding: 0 5px;
-    border-radius: 3px;
-    margin-right: 4px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-right: 5px;
     color: #fff;
+    line-height: 1.4;
     vertical-align: 1px;
+    text-transform: uppercase;
   }
   .ln-chip.chip-ER  { background: #6b7280; }
   .ln-chip.chip-Agg { background: #0e9594; }
