@@ -108,7 +108,7 @@ const probeAfter = episode.probe_after_idx;
             data-session={sess.idx}
             role="tab"
             aria-selected={sess.idx === 9 ? "true" : "false"}
-            title={`Session ${sess.idx} · ${sess.timestamp ?? ""}${sess.evidence_type ? " · " + sess.evidence_type : ""}`}
+            title={`Session ${sess.idx} · ${sess.timestamp ?? ""}`}
           >
             <span class="tl-idx">{sess.idx}</span>
           </button>
@@ -150,8 +150,8 @@ const probeAfter = episode.probe_after_idx;
 
     // ─── Sparkline (SVG) ─────────────────────────────────────────────
     const TL_W = 900;
-    const TL_H = 140;
-    const TL_PAD = { top: 14, right: 56, bottom: 28, left: 56 };
+    const TL_H = 120;
+    const TL_PAD = { top: 18, right: 50, bottom: 10, left: 50 };
 
     function drawSparkline() {
       const s = series[state.system];
@@ -187,9 +187,6 @@ const probeAfter = episode.probe_after_idx;
       const C_MUTED = "#5b5b5b";
       const C_BORDER = "#e5e3dc";
 
-      // x-axis: show all session indices
-      const xTicks = s.size.map((_, i) => i);
-
       container.innerHTML = `
         <svg viewBox="0 0 ${TL_W} ${TL_H}" preserveAspectRatio="none" width="100%" height="${TL_H}" style="display:block">
           ${yTicks
@@ -204,15 +201,8 @@ const probeAfter = episode.probe_after_idx;
               );
             })
             .join("")}
-          ${xTicks
-            .map((i) => {
-              const xv = x(i);
-              const yv = TL_H - TL_PAD.bottom + 12;
-              return `<text x="${xv.toFixed(1)}" y="${yv}" fill="${C_MUTED}" font-size="10" text-anchor="middle">${i}</text>`;
-            })
-            .join("")}
-          <text x="${TL_PAD.left - 6}" y="${TL_PAD.top - 4}" fill="${STROKE_SIZE}" font-size="10" text-anchor="end">chars</text>
-          <text x="${TL_W - TL_PAD.right + 6}" y="${TL_PAD.top - 4}" fill="${STROKE_GOLD}" font-size="10" text-anchor="start">gold %</text>
+          <text x="${TL_PAD.left - 6}" y="${TL_PAD.top - 6}" fill="${STROKE_SIZE}" font-size="10" text-anchor="end">chars</text>
+          <text x="${TL_W - TL_PAD.right + 6}" y="${TL_PAD.top - 6}" fill="${STROKE_GOLD}" font-size="10" text-anchor="start">gold %</text>
           <path d="${sizePath}" fill="none" stroke="${STROKE_SIZE}" stroke-width="1.8" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
           <path d="${goldPath}" fill="none" stroke="${STROKE_GOLD}" stroke-width="1.8" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
           ${sel !== null
@@ -300,12 +290,19 @@ const probeAfter = episode.probe_after_idx;
       `;
     }
 
-    function renderDiff(added) {
-      if (!added || added.length === 0)
-        return `<div class="snap-empty">No new lines added at this session.</div>`;
-      return `<pre class="snap-block diff">${added
-        .map((ln) => `<span class="ln added">${escapeHtml(ln) || "&nbsp;"}</span>`)
-        .join("\n")}</pre>`;
+    function renderDiff(added, removed) {
+      const a = added || [];
+      const r = removed || [];
+      if (a.length === 0 && r.length === 0)
+        return `<div class="snap-empty">No diff at this session.</div>`;
+      const aBlock = a
+        .map((ln) => `<span class="ln added">+ ${escapeHtml(ln) || "&nbsp;"}</span>`)
+        .join("\n");
+      const rBlock = r
+        .map((ln) => `<span class="ln removed">− ${escapeHtml(ln) || "&nbsp;"}</span>`)
+        .join("\n");
+      const sep = aBlock && rBlock ? "\n" : "";
+      return `<pre class="snap-block diff">${aBlock}${sep}${rBlock}</pre>`;
     }
 
     async function fetchSnapshot(sys, idx) {
@@ -386,7 +383,7 @@ const probeAfter = episode.probe_after_idx;
 
       const body =
         state.diffMode === "diff"
-          ? `<div class="snap-body">${renderDiff(added)}</div>`
+          ? `<div class="snap-body">${renderDiff(added, removed)}</div>`
           : `<div class="snap-body" id="snap-body-full"></div>`;
 
       return header + body;
@@ -404,11 +401,12 @@ const probeAfter = episode.probe_after_idx;
 
     function renderSessionPane() {
       const sess = sessions[state.session];
-      const evtLabel = sess.evidence_type
-        ? `<span class="kind-pill evidence">${escapeHtml(sess.evidence_type)}</span>`
-        : sess.kind === "filler"
-          ? `<span class="kind-pill filler">filler</span>`
-          : "";
+      const evtLabel =
+        sess.kind === "evidence"
+          ? `<span class="kind-pill evidence">evidence</span>`
+          : sess.kind === "filler"
+            ? `<span class="kind-pill filler">filler</span>`
+            : "";
 
       return `
         <div class="sess-pane">
@@ -1015,6 +1013,7 @@ const probeAfter = episode.probe_after_idx;
   }
   .snap-block .ln { display: block; padding: 1px 4px; border-radius: 3px; }
   .snap-block .ln.added { background: #e4f5ea; color: #155a35; }
+  .snap-block .ln.removed { background: #fbeaea; color: #8b2828; }
   .snap-empty, .snap-loading, .snap-error {
     padding: 12px;
     background: #fbfbf6;
