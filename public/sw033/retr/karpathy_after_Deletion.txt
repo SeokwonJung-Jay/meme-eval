@@ -1,0 +1,1 @@
+Our log drain endpoint is stream.velturis.io/aurora. It is important to monitor and secure access to this endpoint to maintain security and proper log handling [[daily/2023-03-17.md]].

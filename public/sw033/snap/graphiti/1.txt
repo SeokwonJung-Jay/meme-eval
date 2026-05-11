@@ -1,0 +1,6 @@
+The User is advised to implement a dead-letter queue for handling messages that cannot be processed successfully in Azure Queue Storage rather than relying on a default implementation, which does not exist.
+The User needs to configure dead-letter queues individually for each regular queue in their Azure Queue Storage implementation.
+User uses CSS rules targeting the .modal class to style the modal window and position it at the top of the screen.
+User uses CSS rules on the .aws-search-form-wrapper class inside modal content to control display and max width.
+User applies CSS rules to the .col-lg-9 class to set its width and float properties.
+User uses CSS rules targeting the .modal-content class to style the modal content and adjust its margin for placement near the top of the screen.

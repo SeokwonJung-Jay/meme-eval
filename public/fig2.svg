@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="38 0 1424 932" font-family="Arial, 'Helvetica Neue', Helvetica, sans-serif">
+  <defs>
+    <style>
+      text { font-size: 20px; }
+      .cat-title  { font-size: 26px; font-weight: 700; fill: #000; text-anchor: middle; }
+      .task-title { font-size: 22px; font-weight: 700; fill: #000; }
+      .txt        { font-size: 20px; fill: #000; }
+      .red        { font-size: 20px; font-weight: 700; fill: #e53935; }
+      .ent2       { font-size: 20px; font-weight: 700; fill: #7e22ce; }
+      .ent3       { font-size: 20px; font-weight: 700; fill: #7e22ce; }
+      .ent4       { font-size: 20px; font-weight: 700; fill: #0e9594; }
+      .hl-red     { fill: none; stroke: none; }
+      .hl-ent2    { fill: none; stroke: none; }
+      .hl-ent3    { fill: none; stroke: none; }
+      .hl-ent4    { fill: none; stroke: none; }
+      .strike     { font-size: 20px; fill: #999; }
+      .strikeline { stroke: #999; stroke-width: 1.5; }
+      .qmark      { font-size: 13px; font-weight: 700; fill: #b8860b; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; text-anchor: middle; }
+      .box-blue   { fill: #fafcff; stroke: #185fa5; stroke-width: 0.8; }
+      .box-yellow { fill: #fefbef; stroke: #d4b84a; stroke-width: 0.8; stroke-dasharray: 4 3; }
+      .box-green  { fill: #f8fbf9; stroke: #4e7754; stroke-width: 0.8; stroke-dasharray: 4 3; }
+      .icon-user-c { fill: #b0b0b0; stroke: #888888; stroke-width: 0.8; }
+      .icon-user-l { stroke: #888888; stroke-width: 0.8; fill: #b0b0b0; stroke-linecap: round; }
+      .icon-bot-c  { fill: #d6e9fb; stroke: #185fa5; stroke-width: 0.8; }
+      .icon-bot-l  { stroke: #185fa5; stroke-width: 0.8; fill: none; stroke-linecap: round; }
+      .icon-q-c    { fill: #fdf3c2; stroke: #d4b84a; stroke-width: 0.8; }
+    </style>
+    <symbol id="user-icon" viewBox="0 0 24 24">
+      <circle class="icon-user-c" cx="12" cy="8" r="4"/>
+      <path class="icon-user-l" d="M4 22 C4 16, 8 14, 12 14 C16 14, 20 16, 20 22"/>
+    </symbol>
+    <symbol id="bot-icon" viewBox="0 0 24 24">
+      <rect class="icon-bot-c" x="4" y="8" width="16" height="12" rx="2"/>
+      <line class="icon-bot-l" x1="12" y1="4" x2="12" y2="8"/>
+      <circle class="icon-bot-c" cx="12" cy="3" r="1.2"/>
+      <circle cx="9" cy="13" r="1.2" fill="#185fa5"/>
+      <circle cx="15" cy="13" r="1.2" fill="#185fa5"/>
+      <line class="icon-bot-l" x1="9" y1="17" x2="15" y2="17"/>
+    </symbol>
+    <symbol id="q-icon" viewBox="0 0 24 24">
+      <circle class="icon-q-c" cx="12" cy="12" r="10"/>
+      <text x="12" y="17" class="qmark">?</text>
+    </symbol>
+  </defs>
+  <text class="cat-title" x="250"  y="50">Retrieval</text>
+  <text class="cat-title" x="750"  y="50">State management</text>
+  <text class="cat-title" x="1250" y="50">Dependency reasoning</text>
+  <line x1="40"   y1="65" x2="460"  y2="65" stroke="#000" stroke-width="1.2"/>
+  <line x1="540"  y1="65" x2="960"  y2="65" stroke="#000" stroke-width="1.2"/>
+  <line x1="1040" y1="65" x2="1460" y2="65" stroke="#000" stroke-width="1.2"/>
+  <line x1="500" y1="80" x2="500" y2="912" stroke="#999" stroke-width="1"/>
+  <line x1="1000" y1="80" x2="1000" y2="912" stroke="#999" stroke-width="1"/>
+  <text x="40" y="103" class="task-title">Exact recall</text>
+  <use href="#user-icon" x="40" y="121" width="28" height="28"/>
+  <rect class="box-blue" x="80" y="117" width="380" height="150" rx="6"/>
+  <text x="94" y="169"><tspan class="txt">Remember this error word for word: &quot;</tspan></text>
+  <rect class="hl-red" x="92" y="179" width="297" height="24" rx="3"/>
+  <text x="94" y="197"><tspan class="red">OutOfMemoryError: Java heap</tspan></text>
+  <rect class="hl-red" x="92" y="207" width="223" height="24" rx="3"/>
+  <text x="94" y="225"><tspan class="red">space. GC overhead …</tspan><tspan class="txt">&quot;</tspan></text>
+  <use href="#user-icon" x="40" y="277" width="28" height="28"/>
+  <rect class="box-yellow" x="80" y="273" width="380" height="93" rx="6"/>
+  <text x="94" y="325"><tspan class="txt">Recite the exact error log I shared.</tspan></text>
+  <use href="#bot-icon" x="40" y="385" width="28" height="28"/>
+  <rect class="box-green" x="80" y="372" width="380" height="138" rx="6"/>
+  <rect class="hl-red" x="92" y="416" width="297" height="24" rx="3"/>
+  <text x="94" y="434"><tspan class="red">OutOfMemoryError: Java heap</tspan></text>
+  <rect class="hl-red" x="92" y="444" width="223" height="24" rx="3"/>
+  <text x="94" y="462"><tspan class="red">space. GC overhead …</tspan></text>
+  <text x="40" y="544" class="task-title">Aggregation</text>
+  <use href="#user-icon" x="40" y="562" width="28" height="28"/>
+  <rect class="box-blue" x="80" y="558" width="380" height="53" rx="6"/>
+  <rect class="hl-red" x="206" y="572" width="73" height="24" rx="3"/>
+  <text x="94" y="590"><tspan class="txt">My hobby is </tspan><tspan class="red">pottery</tspan><tspan class="txt">.</tspan></text>
+  <use href="#user-icon" x="40" y="621" width="28" height="28"/>
+  <rect class="box-blue" x="80" y="617" width="380" height="53" rx="6"/>
+  <rect class="hl-ent3" x="147" y="631" width="135" height="24" rx="3"/>
+  <text x="94" y="649"><tspan class="txt">I play </tspan><tspan class="ent3">rock climbing</tspan><tspan class="txt">.</tspan></text>
+  <use href="#user-icon" x="40" y="680" width="28" height="28"/>
+  <rect class="box-blue" x="80" y="676" width="380" height="53" rx="6"/>
+  <rect class="hl-ent4" x="224" y="690" width="100" height="24" rx="3"/>
+  <text x="94" y="708"><tspan class="txt">I&apos;m a part of a </tspan><tspan class="ent4">book club</tspan><tspan class="txt">.</tspan></text>
+  <use href="#user-icon" x="40" y="739" width="28" height="28"/>
+  <rect class="box-yellow" x="80" y="735" width="380" height="81" rx="6"/>
+  <text x="94" y="767"><tspan class="txt">What do I do in my free time? List</tspan></text>
+  <text x="94" y="795"><tspan class="txt">everything.</tspan></text>
+  <use href="#bot-icon" x="40" y="826" width="28" height="28"/>
+  <rect class="box-green" x="80" y="822" width="380" height="81" rx="6"/>
+  <rect class="hl-red" x="92" y="836" width="74" height="24" rx="3"/>
+  <rect class="hl-ent3" x="174" y="836" width="135" height="24" rx="3"/>
+  <rect class="hl-ent4" x="356" y="836" width="53" height="24" rx="3"/>
+  <text x="94" y="854"><tspan class="red">Pottery</tspan><tspan class="txt">, </tspan><tspan class="ent3">rock climbing</tspan><tspan class="txt">, and </tspan><tspan class="ent4">book</tspan></text>
+  <rect class="hl-ent4" x="92" y="864" width="45" height="24" rx="3"/>
+  <text x="94" y="882"><tspan class="ent4">club</tspan><tspan class="txt">.</tspan></text>
+  <text x="540" y="103" class="task-title">Tracking</text>
+  <use href="#user-icon" x="540" y="121" width="28" height="28"/>
+  <rect class="box-blue" x="580" y="117" width="380" height="54" rx="6"/>
+  <rect class="hl-red" x="671" y="131" width="146" height="24" rx="3"/>
+  <text x="594" y="149"><tspan class="txt">I drive a </tspan><tspan class="red">Zyvanta Sedan</tspan><tspan class="txt">.</tspan></text>
+  <use href="#user-icon" x="540" y="181" width="28" height="28"/>
+  <rect class="box-blue" x="580" y="177" width="380" height="54" rx="6"/>
+  <rect class="hl-red" x="671" y="191" width="178" height="24" rx="3"/>
+  <text x="594" y="209"><tspan class="txt">I drive a </tspan><tspan class="red">Therwyn Compact </tspan><tspan class="txt">now.</tspan></text>
+  <use href="#user-icon" x="540" y="241" width="28" height="28"/>
+  <rect class="box-blue" x="580" y="237" width="380" height="82" rx="6"/>
+  <text x="594" y="269"><tspan class="txt">I&apos;ve switched again — I drive a</tspan></text>
+  <rect class="hl-red" x="592" y="279" width="158" height="24" rx="3"/>
+  <text x="594" y="297"><tspan class="red">Xylorim Scooter</tspan><tspan class="txt">.</tspan></text>
+  <use href="#user-icon" x="540" y="329" width="28" height="28"/>
+  <rect class="box-yellow" x="580" y="325" width="380" height="81" rx="6"/>
+  <text x="594" y="357"><tspan class="txt">List all vehicles I&apos;ve had, earliest to</tspan></text>
+  <text x="594" y="385"><tspan class="txt">latest.</tspan></text>
+  <use href="#bot-icon" x="540" y="416" width="28" height="28"/>
+  <rect class="box-green" x="580" y="412" width="380" height="98" rx="6"/>
+  <rect class="hl-red" x="592" y="426" width="172" height="24" rx="3"/>
+  <text x="594" y="444"><tspan class="red">1. Zyvanta Sedan,</tspan></text>
+  <rect class="hl-red" x="592" y="449" width="204" height="24" rx="3"/>
+  <text x="594" y="467"><tspan class="red">2. Therwyn Compact,</tspan></text>
+  <rect class="hl-red" x="592" y="472" width="184" height="24" rx="3"/>
+  <text x="594" y="490"><tspan class="red">3. Xylorim Scooter.</tspan></text>
+  <text x="540" y="544" class="task-title">Deletion</text>
+  <use href="#user-icon" x="540" y="562" width="28" height="28"/>
+  <rect class="box-blue" x="580" y="558" width="380" height="75" rx="6"/>
+  <rect class="hl-red" x="784" y="583" width="66" height="24" rx="3"/>
+  <text x="594" y="601"><tspan class="txt">My partner&apos;s name is </tspan><tspan class="red">James</tspan><tspan class="txt">.</tspan></text>
+  <use href="#user-icon" x="540" y="643" width="28" height="28"/>
+  <rect class="box-blue" x="580" y="639" width="380" height="103" rx="6"/>
+  <text x="594" y="682"><tspan class="txt">Please remove my partner&apos;s name from</tspan></text>
+  <text x="594" y="710"><tspan class="txt">your memory.</tspan></text>
+  <use href="#user-icon" x="540" y="752" width="28" height="28"/>
+  <rect class="box-yellow" x="580" y="748" width="380" height="75" rx="6"/>
+  <text x="594" y="791"><tspan class="txt">What&apos;s my partner&apos;s name?</tspan></text>
+  <use href="#bot-icon" x="540" y="833" width="28" height="28"/>
+  <rect class="box-green" x="580" y="829" width="380" height="74" rx="6"/>
+  <rect class="hl-red" x="832" y="853" width="74" height="24" rx="3"/>
+  <text x="594" y="871"><tspan class="txt">That information has been </tspan><tspan class="red">deleted</tspan><tspan class="txt">.</tspan></text>
+  <text x="1040" y="103" class="task-title">Cascade</text>
+  <use href="#user-icon" x="1040" y="121" width="28" height="28"/>
+  <rect class="box-blue" x="1080" y="117" width="380" height="53" rx="6"/>
+  <rect class="hl-red" x="1246" y="131" width="116" height="24" rx="3"/>
+  <text x="1094" y="149"><tspan class="txt">The team lead is </tspan><tspan class="red">Sarah Chen</tspan><tspan class="txt">.</tspan></text>
+  <use href="#user-icon" x="1040" y="180" width="28" height="28"/>
+  <rect class="box-blue" x="1080" y="176" width="380" height="53" rx="6"/>
+  <rect class="hl-ent2" x="1271" y="190" width="98" height="24" rx="3"/>
+  <text x="1094" y="208"><tspan class="txt">Code reviews go to </tspan><tspan class="ent2">David Lee</tspan><tspan class="txt">.</tspan></text>
+  <use href="#user-icon" x="1040" y="239" width="28" height="28"/>
+  <rect class="box-blue" x="1080" y="235" width="380" height="81" rx="6"/>
+  <text x="1094" y="267"><tspan class="txt">If the team lead changes, the code</tspan></text>
+  <rect class="hl-ent2" x="1237" y="277" width="126" height="24" rx="3"/>
+  <text x="1094" y="295"><tspan class="txt">reviewer will be </tspan><tspan class="ent2">Seoyun Choi</tspan><tspan class="txt">.</tspan></text>
+  <use href="#user-icon" x="1040" y="326" width="28" height="28"/>
+  <rect class="box-blue" x="1080" y="322" width="380" height="53" rx="6"/>
+  <rect class="hl-red" x="1092" y="336" width="108" height="24" rx="3"/>
+  <text x="1094" y="354"><tspan class="red">Minjun Lee </tspan><tspan class="txt">is our new team lead.</tspan></text>
+  <use href="#user-icon" x="1040" y="385" width="28" height="28"/>
+  <rect class="box-yellow" x="1080" y="381" width="380" height="53" rx="6"/>
+  <text x="1094" y="413"><tspan class="txt">Who&apos;s our code reviewer?</tspan></text>
+  <use href="#bot-icon" x="1040" y="453" width="28" height="28"/>
+  <rect class="box-green" x="1080" y="440" width="380" height="70" rx="6"/>
+  <rect class="hl-ent2" x="1092" y="463" width="126" height="24" rx="3"/>
+  <text x="1094" y="481"><tspan class="ent2">Seoyun Choi</tspan></text>
+  <text x="1040" y="544" class="task-title">Absence</text>
+  <use href="#user-icon" x="1040" y="562" width="28" height="28"/>
+  <rect class="box-blue" x="1080" y="558" width="380" height="59" rx="6"/>
+  <rect class="hl-red" x="1162" y="575" width="162" height="24" rx="3"/>
+  <text x="1094" y="593"><tspan class="txt">I live in </tspan><tspan class="red">Pyresta Meadow</tspan><tspan class="txt">.</tspan></text>
+  <use href="#user-icon" x="1040" y="627" width="28" height="28"/>
+  <rect class="box-blue" x="1080" y="623" width="380" height="87" rx="6"/>
+  <rect class="hl-ent2" x="1290" y="640" width="68" height="24" rx="3"/>
+  <text x="1094" y="658"><tspan class="txt">My commute is about </tspan><tspan class="ent2">30 min </tspan><tspan class="txt">— if I</tspan></text>
+  <text x="1094" y="686"><tspan class="txt">move, my commute time will change.</tspan></text>
+  <use href="#user-icon" x="1040" y="720" width="28" height="28"/>
+  <rect class="box-blue" x="1080" y="716" width="380" height="59" rx="6"/>
+  <rect class="hl-red" x="1232" y="733" width="142" height="24" rx="3"/>
+  <text x="1094" y="751"><tspan class="txt">I just moved to </tspan><tspan class="red">Keldara Grove</tspan><tspan class="txt">.</tspan></text>
+  <use href="#user-icon" x="1040" y="785" width="28" height="28"/>
+  <rect class="box-yellow" x="1080" y="781" width="380" height="58" rx="6"/>
+  <text x="1094" y="815"><tspan class="txt">How long is my commute?</tspan></text>
+  <use href="#bot-icon" x="1040" y="849" width="28" height="28"/>
+  <rect class="box-green" x="1080" y="845" width="380" height="58" rx="6"/>
+  <rect class="hl-ent2" x="1092" y="861" width="96" height="24" rx="3"/>
+  <text x="1094" y="879"><tspan class="ent2">Uncertain</tspan></text>
+</svg>

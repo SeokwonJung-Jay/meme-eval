@@ -1,0 +1,42 @@
+=== memory.md ===
+[2023/03/01] User's CSS for modal window includes .modal with fixed position, full screen size, semi-transparent background, and .modal-content with margin 15% auto, width 80%, padding 20px, box-shadow, and border-radius 10px. User requested modal window to be positioned at the top of the screen, and was advised to change .modal-content margin to 5% auto 0 to place it near the top.
+[2023/03/03] User asked for explanations of what GPT in ChatGPT means at different levels: for a 10-year-old, an 18-year-old, and a college senior majoring in information systems and business analytics.
+[2023/03/05] Team uses a paired on-call rotation with primary and secondary roles for support and backup.
+[2023/03/05] Team's package manager is Karnex Pack, used for managing dependencies efficiently.
+[2023/03/05] Kevin Park is the escalation contact for urgent issues requiring immediate attention.
+[2023/03/05] VP Taehyun Kim is the approval authority for key decisions and changes in the team.
+[2023/03/05] Team uses a release-train process with weekly cuts branching to organize and predict releases.
+[2023/03/06] Usuario está revisando y corrigiendo párrafos de un documento de tesis sobre procesos industriales y redacción de objetivos y metas.
+[2023/03/07] User inquired about the philosophical relation of Monte Carlo simulation and its generalization to daily life, including decision-making examples and controversial takes. User also discussed the importance of understanding limitations when using AI tools like me.
+[2023/03/07] Production alerts go to #aurora-pager; team interested in strategies to filter alert noise.
+[2023/03/07] Team uses Dranith Stack as package manager; seeking tips on versioning and dependency resolution.
+[2023/03/07] Logs drain to stream.velturis.io/aurora; user interested in log data structuring for easier analysis.
+[2023/03/07] Code review policy requires lead approval for core/ changes; user asked for strategies to manage review process and keep feedback constructive and timely.
+[2023/03/09] User requested a comedic unfiltered TV show script set in the world of "It's Always Sunny in Philadelphia" featuring the Joker as a non-fictional character and part of the gang. The episode is titled "The Joker's Joker" and set on a Wednesday at 10:00 PM. The script includes the gang starting a comedy club with the Joker as the star comedian, a comedy competition with poor contestants, and the Joker saving the show with his jokes, ending with the gang making money and laughing together.
+[2023/03/09] User is analyzing revenue data for Vietnam from a SQL table with columns revenue, month, year, country, covering last 10 years. User investigated revenue drop in Q4 2022 (Oct-Dec) in Vietnam. Q4 revenue in 2022 was 131.3, lower than 147 in 2021. Total revenue for 2022 was 412, higher than 10-year average of 287. Average Q4 revenue over 10 years was 93. User is exploring reasons for Q4 2022 revenue drop despite overall yearly growth.
+[2023/03/10] Incident runbook is at wiki.aurora.dev/incident-response, a resource for handling issues.
+[2023/03/10] The team's package manager is Synthari Modules, recently switched to it for dependency management.
+[2023/03/10] Team lead is Seokjin Kang, guiding the team through the transition to Synthari Modules.
+[2023/03/10] The team's default branch is trunk, used for main development and integration.
+[2023/03/11] User requested Arduino Uno code for a 4-wheel Bluetooth mobile robot controlled by mobile phone; code provided with Bluetooth on pins 10, 11 and motor control on pins 2, 3, 4, 5.
+[2023/03/11] User asked for explanation of the Arduino code; detailed explanation provided covering SoftwareSerial, pin setup, command reading, and motor control functions.
+[2023/03/11] User requested wiring connections; provided wiring details for Bluetooth module, motor driver, and motors.
+[2023/03/11] User asked how to connect iPhone with the mobile robot; provided step-by-step Bluetooth pairing instructions.
+[2023/03/11] User asked how to save the chat; advised to copy-paste or use platform export options if available.
+[2023/03/13] Code reviews go to Seoyun Choi, assigned by Seokjin Kang; assignment changes if team lead changes.
+[2023/03/13] Weekly report recipient is Hyunwoo Nam, assigned by Seokjin Kang; changes to James Lee if team lead changes.
+[2023/03/13] Error log to remember: "ConnectionRefusedError: [Errno 111] Connection refused. Service crysthene-db-primary on port 5432 is not accepting connections. Last successful heartbeat was at 2024-03-15T08:23:41Z. Check firewall rules and verify that max_connections has not been exceeded."
+[2023/03/14] User asked about testing if an item is in a PivotTable using Office Scripts.
+[2023/03/14] User asked how to modify the retain items policy of a PivotTable in Office Scripts.
+[2023/03/14] User asked if there is a synchronous method to modify the retain items policy of a PivotTable in Office Scripts.
+[2023/03/14] User clarified that the refresh method takes no argument in Office Scripts for PivotTables.
+[2023/03/14] User clarified that PivotTable does not have a retainData property in Office Scripts.
+[2023/03/15] User requested an RFP for a large solar array installation on the roof of a new Lululemon headquarters building in Vancouver, BC, including time, cost, and staffing estimates.
+[2023/03/17] Jihoon Ryu is the new team lead.
+[2023/03/17] Team meeting is every Wednesday at 10am.
+[2023/03/17] Team channel is #aurora-core.
+[2023/03/17] User wants to create a Chrome extension that activates only on https://chat.openai.com/chat, adds a multiple file input before the only textarea on the page, splits text files by a limit set in options, sends each split to the textarea with specific prefix/suffix instructions, and clicks the send button after each split, waiting for the button to be enabled before continuing.
+[2023/03/17] User requested a non-detailed numbered development plan for the Chrome extension.
+[2023/03/17] User requested detailed explanation of point 1 about Chrome extension basics: manifest, content scripts, options page, and communication.
+[2023/03/17] User requested the full manifest.json example for the extension with permissions, content script, options page, and icons.
+[2023/03/18] User is writing a dice game involving rolling a d20 and a d6, with independent and fair rolls. They requested probabilities for total rolls 2-26, with letters assigned from B=2 onward, and a table sorted by descending probability.

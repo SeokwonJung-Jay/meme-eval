@@ -1,0 +1,5 @@
+Relevant facts:
+
+[2023/03/07] Code review policy: lead approval required for core/
+[2023/03/17] Code reviews go to Seoyun Choi (tied to team lead)
+[2023/03/17] Team lead: Jihoon Ryu (updated from Seokjin Kang)

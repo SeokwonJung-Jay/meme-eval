@@ -1,0 +1,10 @@
+[CONTROLS] The motor driver controls the motors of the mobile robot.
+[DRAINS_LOGS_TO] User's production logs drain to stream.velturis.io/aurora for monitoring and tracking.
+[DECLARES] The manifest.json declares options.html as the options page of the extension.
+[USES_RESOURCE] User references the incident runbook located at wiki.aurora.dev/incident-response as a useful resource for handling issues.
+[PAIRS_WITH] The iPhone pairs with the Bluetooth module to communicate with the mobile robot.
+[CONTROLS_VIA_BLUETOOTH] The iPhone controls the mobile robot by sending commands via the paired Bluetooth module.
+[USES_TEAM_CHANNEL] The User uses the team channel #aurora-core.
+[USES_CSS_FOR] User uses CSS rules targeting the .modal class to style the modal window and position it at the top of the screen.
+[COMPLAINS_ABOUT] Dee complained that Joker was the only funny person at the competition despite the disaster overall.
+[RECOGNIZES_AS_STAR] Dennis acknowledged Joker as the star of the show and key to the comedy club's success.

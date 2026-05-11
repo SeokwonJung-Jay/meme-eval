@@ -1,0 +1,24 @@
+=== memory.md ===
+# Memory File
+
+[2023/03/01] User's name: Ігор Колодкін
+[2023/03/01] User communicates in Ukrainian
+[2023/03/01] User does web development (works with HTML/CSS, modal windows, WordPress-related code like AWS search form)
+
+[2023/03/05] Team uses paired on-call rotation (primary + secondary)
+[2023/03/05] Escalation contact: Kevin Park
+[2023/03/05] Approval authority: VP Taehyun Kim
+[2023/03/05] Team release process: release-train with weekly cuts branching
+
+[2023/03/07] Production alerts channel: #aurora-pager
+[2023/03/07] Code review policy: lead approval required for core/
+
+[2023/03/10] Incident runbook location: wiki.aurora.dev/incident-response
+[2023/03/10] Team's package manager: Synthari Modules (updated from Dranith Stack)
+[2023/03/10] Team's default branch: trunk
+
+[2023/03/17] Team lead: Jihoon Ryu (updated from Seokjin Kang)
+[2023/03/17] Code reviews go to Seoyun Choi (tied to team lead)
+[2023/03/17] Weekly report recipient: James Lee (per rule: when team lead changed from Seokjin Kang, recipient becomes James Lee)
+[2023/03/17] Team meeting: every Wednesday 10am
+[2023/03/17] Team channel: #aurora-core

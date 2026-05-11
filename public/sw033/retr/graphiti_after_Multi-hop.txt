@@ -1,0 +1,10 @@
+[SUPPORTS] The paired on-call setup provides support to team members during on-call duty.
+[INCLUDES_ROLE] The paired on-call setup includes a primary responder role.
+[ADDRESSES_AS_PART_OF_SCHEME] Joker explained to Dee that he is part of the gang and a comedic genius, dispelling her confusion about his role.
+[USES_RESOURCE] User references the incident runbook located at wiki.aurora.dev/incident-response as a useful resource for handling issues.
+[CONFIGURES] The Settings app on the iPhone is used to enable and manage Bluetooth connections including pairing with the Bluetooth module on the mobile robot.
+[SENDS_ALERTS_TO] User's production alerts are sent to #aurora-pager channel to monitor production events.
+[IS_BASED_ON] ChatGPT is based on the Generative Pre-trained Transformer architecture and training methods.
+[IS_CONTACT_FOR] Kevin Park is the designated contact person for escalations that require immediate attention.
+[IS_EXTENSION_FOR] OpenAI Chat File Splitter is a Chrome extension designed to work on Google Chrome.
+[COMMUNICATES_WITH] User maintains communication with Seokjin Kang during the package manager transition to keep aligned.

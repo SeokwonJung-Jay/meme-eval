@@ -1,0 +1,10 @@
+[ASSIGNS_CODE_REVIEWS_TO] Seokjin Kang assigns code reviews to Seoyun Choi, and this assignment changes if the team lead changes.
+[REQUIRES_CODE_REVIEW_APPROVAL_FROM] User's team requires lead approval for changes in core/ code directories before merging.
+[USES_PACKAGE_MANAGER] User reports that the team's package manager has switched to Synthari Modules during the project transition.
+[USES_DEFAULT_BRANCH] User states that the team's default branch in version control is called trunk, which is a common choice among teams.
+[COMMUNICATES_WITH] User maintains communication with Seokjin Kang during the package manager transition to keep aligned.
+[LEADS] Seokjin Kang is the team lead guiding the User and team members through the transition to Synthari Modules.
+[HOLDS_ROLE] VP Taehyun Kim holds the role of approval authority for the team.
+[DRAINS_LOGS_TO] User's production logs drain to stream.velturis.io/aurora for monitoring and tracking.
+[USES_BRANCHING_STRATEGY] The release-train process uses a weekly cuts branching strategy.
+[USES_CSS_FOR] User uses CSS rules on the .aws-search-form-wrapper class inside modal content to control display and max width.

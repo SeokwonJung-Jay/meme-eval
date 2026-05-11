@@ -1,0 +1,7 @@
+[DRAINS_LOGS_TO] User's production logs drain to stream.velturis.io/aurora for monitoring and tracking.
+[SENDS_ALERTS_TO] User's production alerts are sent to #aurora-pager channel to monitor production events.
+[PERFORMS] ChatGPT performs natural language understanding.
+[USES_FOR_DEPENDENCY_MANAGEMENT] User manages project dependencies using Dranith Stack package manager.
+[IMPLEMENTS] The User is advised to implement a dead-letter queue for handling messages that cannot be processed successfully in Azure Queue Storage rather than relying on a default implementation, which does not exist.
+[CONFIGURES_DEAD_LETTER_QUEUE_FOR] The User needs to configure dead-letter queues individually for each regular queue in their Azure Queue Storage implementation.
+[IS_CONTACT_FOR] Kevin Park is the designated contact person for escalations that require immediate attention.

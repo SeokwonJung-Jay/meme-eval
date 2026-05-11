@@ -1,0 +1,148 @@
+DAILY (2023-03-01):
+
+---
+## Session 1 [2023/03/01 (Wed) 09:00]
+**Context:**  
+User was working on CSS styling to position a modal window at the top of a webpage.
+
+**Key Exchanges:**  
+- User requested CSS code for a modal window fixed at the top of the screen.  
+- Assistant provided CSS with `.modal` fixed at top:0 and `.modal-content` centered vertically using transform translateY(-50%).  
+- User reported the solution did not work and shared their existing CSS.  
+- Assistant advised adjusting `.modal-content` margin to `5% auto 0` to position the modal near the top instead of centered vertically.
+
+**Decisions Made:**  
+- Use `margin: 5% auto 0` on `.modal-content` to place the modal window near the top of the viewport rather than vertically centered, as this better fits the user’s requirement.
+
+**Lessons Learned:**  
+- Vertical centering with `top: 50%` and `transform: translateY(-50%)` centers modal vertically but does not place it at the top.  
+- Adjusting margin-top is a simpler and more effective way to position modal windows near the top of the screen.
+
+**Action Items:**  
+- User to apply the updated margin CSS to `.modal-content` and verify modal appears at the top as intended.
+
+
+DAILY (2023-03-03):
+
+---
+## Session 2 [2023/03/03 (Fri) 05:46]
+**Context:** Discussing best practices and implementation details for consuming messages from Azure Queue Storage, focusing on dead-letter queues.
+
+**Key Exchanges:**
+- Best practice for consuming Azure Queue Storage messages includes using worker roles or Azure Functions with retry and error-handling mechanisms, and employing a lease-based message-processing strategy.
+- Dead-letter queues in Azure Queue Storage are secondary queues to hold messages that fail processing, along with metadata for troubleshooting.
+- Dead-letter queues are not provided by default in Azure Queue Storage; users must implement them by creating secondary queues and handling message moves programmatically.
+- Azure Service Bus Queues/Topics offer built-in dead-letter queue support, unlike Azure Queue Storage.
+
+**Decisions Made:**
+- None explicitly stated; user inquired about dead-letter queue implementation scope but no recommendation was provided yet.
+
+**Lessons Learned:**
+- Azure Queue Storage requires manual implementation of dead-letter queues, unlike Azure Service Bus which has built-in support.
+- Proper error handling and message leasing are critical for reliable message processing.
+
+**Action Items:**
+- Consider whether to implement one dead-letter queue per regular queue or a single dead-letter queue for the entire system (pending user decision).
+
+---
+## Session 3 [2023/03/03 (Fri) 19:59]
+**Context:**  
+User requested explanations of the meaning of "GPT" in ChatGPT tailored to different audience knowledge levels.
+
+**Key Exchanges:**  
+- Explained "GPT" as "Generative Pre-trained Transformer" in simple terms for a 10-year-old, focusing on the model’s ability to create language and its pre-training.  
+- Provided a more technical explanation for an 18-year-old, including the transformer architecture and its role in processing sequential data.  
+- Delivered an in-depth explanation for a college senior in information systems and business analytics, detailing the transformer’s attention mechanism, pre-training, and applications in NLP tasks and industries.
+
+**Lessons Learned:**  
+- Tailoring technical explanations to the audience’s knowledge level improves understanding.  
+- The core components of GPT (generative model, transformer architecture, pre-training) remain consistent but are emphasized differently depending on the audience.
+
+**Action Items:**  
+- None mentioned.
+
+
+DAILY (2023-03-05):
+
+---
+## Session 4 [2023/03/05 (Sun) 11:24]
+**Context:**  
+Discussion on best practices for managing a paired on-call rotation, package management, escalation processes, approval authority, and release-train branching strategy.
+
+**Key Exchanges:**  
+- Paired on-call setup provides backup and faster incident resolution; importance of clear documentation and regular debriefs emphasized.  
+- Karnex Pack used for dependency management; recommended keeping dependencies updated, cleaning unused packages, and documenting configurations.  
+- Kevin Park designated as escalation contact; advised to document escalation criteria and ensure team familiarity.  
+- VP Taehyun Kim is the approval authority; suggested defining clear approval criteria and streamlining the process.  
+- Weekly release-train branching strategy in use; highlighted need for clear branching/merging guidelines and regular team communication.
+
+**Decisions Made:**  
+- Maintain paired on-call rotation with clear handoff and documentation.  
+- Use Kevin Park as the primary escalation contact.  
+- Route key approvals through VP Taehyun Kim with defined criteria.  
+- Continue weekly release-train branching with established branching and merging protocols.
+
+**Lessons Learned:**  
+- Clear documentation and regular reviews improve on-call effectiveness and escalation handling.  
+- Keeping dependencies clean and documented reduces technical debt.  
+- Defined escalation and approval processes reduce confusion and speed decision-making.  
+- Consistent communication is critical for managing branching strategies and avoiding merge conflicts.
+
+**Action Items:**  
+- Periodically gather feedback on on-call rotation effectiveness.  
+- Document escalation criteria and ensure team awareness of Kevin Park’s role.  
+- Create and communicate approval criteria for decisions requiring VP sign-off.  
+- Establish and reinforce branching and merging guidelines within the release-train process.
+
+
+DAILY (2023-03-06):
+
+---
+## Session 5 [2023/03/06 (Mon) 00:21]
+**Context:** Revisión y corrección de párrafos para un documento de tesis sobre procesos industriales en Zinc Nacional y Corporación Tecnológica New Line SA de CV.
+
+**Key Exchanges:**
+- Se revisaron y corrigieron párrafos del planteamiento del problema, justificación y objetivo general para mejorar claridad, precisión, coherencia y redacción.
+- Se definió un objetivo general bajo la premisa de qué se va a hacer, cómo y para qué.
+- Se discutieron características esenciales para la redacción de metas en proyectos y en documentos de tesis, destacando especificidad, medibilidad, alcanzabilidad, relevancia, temporalidad, evaluabilidad, coherencia y comunicabilidad.
+- Se revisó un párrafo complejo sobre el proceso de fabricación de “donas” en la empresa Corporación Tecnológica New Line SA de CV, identificando problemas de claridad, precisión técnica, cohesión y objetividad.
+
+**Decisions Made:**
+- Reformular párrafos para eliminar redundancias, mejorar la precisión técnica y la cohesión entre ideas.
+- Objetivo general estructurado en tres partes: qué se hará, cómo se hará y para qué se hará, para mayor claridad y enfoque.
+- Incorporar características específicas para la redacción de metas en tesis, asegurando alineación con objetivos y metodología.
+
+**Lessons Learned:**
+- La redacción técnica debe ser precisa y evitar ambigüedades para facilitar la comprensión.
+- Dividir oraciones largas y complejas mejora la claridad y la lectura.
+- Metas y objetivos deben ser formulados con criterios claros para facilitar su evaluación y seguimiento.
+- En documentos de tesis, es fundamental que las metas sean coherentes con la hipótesis y permitan el desarrollo metodológico.
+
+**Action Items:**
+- Corregir el párrafo sobre la fabricación de “donas” para mejorar precisión, claridad y objetividad.
+- Continuar revisando y corrigiendo otros párrafos del documento de tesis siguiendo los criterios establecidos.
+
+
+DAILY (2023-03-07):
+
+---
+## Session 6 [2023/03/07 (Tue) 04:35]
+**Context:**  
+Exploring the concept of Monte Carlo simulation, its philosophical relevance, practical applications, and parallels with AI usage.
+
+**Key Exchanges:**  
+- Monte Carlo simulation is a statistical method using random sampling to model uncertainty, applicable in philosophy (e.g., decision theory) depending on user application.  
+- Practical day-to-day uses include risk analysis, decision making, resource allocation, and planning/forecasting.  
+- Concrete example provided: using Monte Carlo simulation to decide between two job offers by modeling uncertainties like cost of living, career advancement, and job satisfaction.  
+- Controversial aspects include reliance on assumptions, computational complexity, and challenges in interpreting results.  
+- AI tools, like Monte Carlo simulation, require appropriate use and understanding of limitations; they assist but do not replace human judgment.
+
+**Decisions Made:**  
+- Emphasized the importance of understanding assumptions and limitations when using Monte Carlo simulations and AI tools to ensure responsible and effective application.
+
+**Lessons Learned:**  
+- Both Monte Carlo simulations and AI tools share the need for careful interpretation and awareness of their constraints to avoid misuse or misinterpretation.  
+- Monte Carlo simulation’s flexibility allows it to be generalized beyond technical fields into everyday decision-making scenarios.
+
+**Action Items:**  
+- None explicitly mentioned.

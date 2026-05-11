@@ -1,0 +1,10 @@
+[ASSIGNS_WEEKLY_REPORTS_TO] If the team lead changes, the weekly report recipient will be James Lee instead of Hyunwoo Nam.
+[ASSIGNS_WEEKLY_REPORTS_TO] Seokjin Kang assigns the weekly report recipient as Hyunwoo Nam, with the assignment changing if the team lead changes.
+[USES_BRANCHING_STRATEGY] The release-train process uses a weekly cuts branching strategy.
+[CONTROLS] The motor driver controls the motors of the mobile robot.
+[ASSIGNS_CODE_REVIEWS_TO] Seokjin Kang assigns code reviews to Seoyun Choi, and this assignment changes if the team lead changes.
+[USES_TEAM_CHANNEL] The User uses the team channel #aurora-core.
+[DECLARES] The manifest.json declares options.html as the options page of the extension.
+[PROVIDES_UPDATED_TABLE_WITH_LETTERS] Assistant provides User with an updated table including a third column of letters assigned starting from B for roll 2 onward.
+[PAIRS_WITH] The iPhone pairs with the Bluetooth module to communicate with the mobile robot.
+[IS_CONTACT_FOR] Kevin Park is the designated contact person for escalations that require immediate attention.

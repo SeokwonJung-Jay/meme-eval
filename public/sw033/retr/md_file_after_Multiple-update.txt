@@ -1,0 +1,3 @@
+- Team's package manager is Karnex Pack, used for managing dependencies efficiently. (2023/03/05)
+- Team uses Dranith Stack as package manager; seeking tips on versioning and dependency resolution. (2023/03/07)
+- The team's package manager is Synthari Modules, recently switched to it for dependency management. (2023/03/10)

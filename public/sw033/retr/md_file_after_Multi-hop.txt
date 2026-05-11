@@ -1,0 +1,3 @@
+- Team uses a paired on-call rotation with primary and secondary roles for support and backup.
+- Kevin Park is the escalation contact for urgent issues requiring immediate attention.
+- Incident runbook is at wiki.aurora.dev/incident-response, a resource for handling issues.

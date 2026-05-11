@@ -1,0 +1,2 @@
+=== memory.md ===
+[2023/03/01] User's CSS for modal window includes .modal with fixed position, full screen size, semi-transparent background, and .modal-content with margin 15% auto, width 80%, padding 20px, box-shadow, and border-radius 10px. User requested modal window to be positioned at the top of the screen, and was advised to change .modal-content margin to 5% auto 0 to place it near the top.

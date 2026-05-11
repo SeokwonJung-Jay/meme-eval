@@ -1,0 +1,10 @@
+[ASSIGNS_WEEKLY_REPORTS_TO] If the team lead changes, the weekly report recipient will be James Lee instead of Hyunwoo Nam.
+[ASSIGNS_WEEKLY_REPORTS_TO] Seokjin Kang assigns the weekly report recipient as Hyunwoo Nam, with the assignment changing if the team lead changes.
+[USES_BRANCHING_STRATEGY] The release-train process uses a weekly cuts branching strategy.
+[CONTROLS] The motor driver controls the motors of the mobile robot.
+[ASSIGNS_CODE_REVIEWS_TO] Seokjin Kang assigns code reviews to Seoyun Choi, and this assignment changes if the team lead changes.
+[PAIRS_WITH] The iPhone pairs with the Bluetooth module to communicate with the mobile robot.
+[IS_CONTACT_FOR] Kevin Park is the designated contact person for escalations that require immediate attention.
+[CONTROLS_VIA_BLUETOOTH] The iPhone controls the mobile robot by sending commands via the paired Bluetooth module.
+[SENDS_ALERTS_TO] User's production alerts are sent to #aurora-pager channel to monitor production events.
+[HOLDS_ROLE] VP Taehyun Kim holds the role of approval authority for the team.

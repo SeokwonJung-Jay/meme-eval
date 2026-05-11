@@ -1,0 +1,3 @@
+The code review policy specifies that lead approval is required for core or critical changes. Role assignments for code review responsibilities are dynamic and tied to the current team lead. This means that the designated code reviewers change when the team lead changes. Clear communication of these role assignments is essential to maintain workflow and accountability.
+
+In summary, code reviews are conducted by assigned reviewers, typically including the team lead or designated individuals, with lead approval required for important changes. These assignments are linked to the team lead role and updated accordingly during leadership transitions [[concepts/code-review-policy]], [[concepts/role-assignments]].

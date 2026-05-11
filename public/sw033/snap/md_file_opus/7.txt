@@ -1,0 +1,16 @@
+=== memory.md ===
+# Memory File
+
+[2023/03/01] User's name: Ігор Колодкін
+[2023/03/01] User communicates in Ukrainian
+[2023/03/01] User does web development (works with HTML/CSS, modal windows, WordPress-related code like AWS search form)
+
+[2023/03/05] Team uses paired on-call rotation (primary + secondary)
+[2023/03/05] Escalation contact: Kevin Park
+[2023/03/05] Approval authority: VP Taehyun Kim
+[2023/03/05] Team release process: release-train with weekly cuts branching
+
+[2023/03/07] Team's package manager: Dranith Stack (updated from Karnex Pack)
+[2023/03/07] Production alerts channel: #aurora-pager
+[2023/03/07] Logs drain to: stream.velturis.io/aurora
+[2023/03/07] Code review policy: lead approval required for core/

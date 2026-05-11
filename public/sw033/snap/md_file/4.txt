@@ -1,0 +1,9 @@
+=== memory.md ===
+[2023/03/01] User's CSS for modal window includes .modal with fixed position, full screen size, semi-transparent background, and .modal-content with margin 15% auto, width 80%, padding 20px, box-shadow, and border-radius 10px. User requested modal window to be positioned at the top of the screen, and was advised to change .modal-content margin to 5% auto 0 to place it near the top.
+[2023/03/03] User asked for explanations of what GPT in ChatGPT means at different levels: for a 10-year-old, an 18-year-old, and a college senior majoring in information systems and business analytics.
+[2023/03/05] Team uses a paired on-call rotation with primary and secondary roles for support and backup.
+[2023/03/05] Team's package manager is Karnex Pack, used for managing dependencies efficiently.
+[2023/03/05] Kevin Park is the escalation contact for urgent issues requiring immediate attention.
+[2023/03/05] VP Taehyun Kim is the approval authority for key decisions and changes in the team.
+[2023/03/05] Team uses a release-train process with weekly cuts branching to organize and predict releases.
+[2023/03/06] Usuario está revisando y corrigiendo párrafos de un documento de tesis sobre procesos industriales y redacción de objetivos y metas.

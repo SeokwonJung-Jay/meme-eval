@@ -1,0 +1,1 @@
+"ConnectionRefusedError: [Errno 111] Connection refused. Service crysthene-db-primary on port 5432 is not accepting connections. Last successful heartbeat was at 2024-03-15T08:23:41Z. Check firewall rules and verify that max_connections has not been exceeded."

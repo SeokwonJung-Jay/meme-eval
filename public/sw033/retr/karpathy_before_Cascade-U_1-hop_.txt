@@ -1,0 +1,5 @@
+The code review policy specifies that lead approval is required for core or critical changes. This means that designated leads or senior team members are responsible for reviewing and approving code changes to maintain quality and ensure critical code is properly vetted. The policy also emphasizes clear communication, setting response time expectations, and providing constructive feedback to foster open discussion and collaboration during code reviews.
+
+In summary, code reviews are conducted by leads or designated reviewers who have the authority to approve changes, especially for important or core parts of the codebase. This process helps ensure code quality and team alignment [[concepts/code-review-policy]].
+
+Additionally, role assignments for code review responsibilities are often tied to team lead changes, meaning that the individuals assigned to review code may change dynamically with leadership transitions. Clear communication about these role assignments is essential to maintain workflow continuity [[concepts/role-assignments]].

@@ -1,0 +1,10 @@
+[USES_PACKAGE_MANAGER] User reports that the team's package manager has switched to Synthari Modules during the project transition.
+[LIMITED_BY] Monte Carlo simulation can be limited by computational intensity due to being resource and time-consuming.
+[COMMUNICATES_WITH] User maintains communication with Seokjin Kang during the package manager transition to keep aligned.
+[USES_FOR_DEPENDENCY_MANAGEMENT] User manages project dependencies using Dranith Stack package manager.
+[USES_DEFAULT_BRANCH] User states that the team's default branch in version control is called trunk, which is a common choice among teams.
+[APPLICATION_IN] Monte Carlo simulation can be used to optimize resource allocation.
+[USES_BRANCHING_STRATEGY] The release-train process uses a weekly cuts branching strategy.
+[USES_IN] Monte Carlo simulation is used in decision theory to study decision making under uncertainty.
+[USES] OpenAI Chat File Splitter uses the manifest.json file to declare its permissions, content scripts, and option page.
+[CONNECTS_TO] The Bluetooth module is used to connect the mobile robot to external devices like the iPhone for wireless control.

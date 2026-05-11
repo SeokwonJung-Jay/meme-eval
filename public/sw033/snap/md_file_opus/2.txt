@@ -1,0 +1,6 @@
+=== memory.md ===
+# Memory File
+
+[2023/03/01] User's name: Ігор Колодкін
+[2023/03/01] User communicates in Ukrainian
+[2023/03/01] User does web development (works with HTML/CSS, modal windows, WordPress-related code like AWS search form)

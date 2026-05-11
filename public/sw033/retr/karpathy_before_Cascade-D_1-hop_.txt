@@ -1,0 +1,1 @@
+The weekly report recipient is Hyunwoo Nam, assigned by Seokjin Kang. If the team lead changes, the report recipient role changes to James Lee. This role assignment is dynamic and tied to the current team lead. [[concepts/role-assignments]]

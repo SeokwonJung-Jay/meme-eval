@@ -1,0 +1,1035 @@
+---
+// Walkthrough section for sw_033. Loads pre-built data and wires interactive
+// state on the client (vanilla JS). External text payloads (full snapshots and
+// retrieved contexts) are fetched on demand from {baseUrl}sw033/.
+import data from "../data/sw033.json";
+
+const baseUrl = import.meta.env.BASE_URL;
+const dataJson = JSON.stringify({ ...data, baseUrl });
+const { episode, sessions, systems, systemLabels, taskOrder, grid } = data;
+
+// Session-kind helpers for static markup
+const probeBefore = episode.probe_before_idx;
+const probeAfter = episode.probe_after_idx;
+---
+
+<section class="walkthrough" aria-labelledby="wt-title">
+  <header class="wt-head">
+    <h2 id="wt-title">
+      <span class="wt-eyebrow">Walkthrough</span>
+      Episode <code>sw_033</code> — software project
+    </h2>
+    <p class="wt-meta">
+      {episode.total_sessions} sessions
+      ({episode.evidence_sessions} evidence, {episode.filler_sessions} filler) ·
+      ~{Math.round(episode.total_tokens / 1000)}K tokens · cascade root:
+      <code>{episode.root}</code>
+    </p>
+  </header>
+
+  <!-- Result grid -->
+  <div class="card">
+    <h3 class="card-title">Result grid <span class="card-sub">(6 tasks × 7 systems, after-questions)</span></h3>
+    <div class="grid-wrap" role="region" aria-label="Result grid">
+      <table class="result-grid">
+        <thead>
+          <tr>
+            <th></th>
+            {systems.map((s) => (
+              <th class={`sys-col${systemLabels[s].featured ? " featured" : ""}`}>
+                <span class="sys-name">{systemLabels[s].name}</span>
+                <span class="sys-llm">{systemLabels[s].internalLLM}</span>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {taskOrder.map((tag) => (
+            <tr>
+              <th scope="row" class="task-row-label">{tag}</th>
+              {systems.map((s) => {
+                const cell = grid[tag][s];
+                return (
+                  <td>
+                    <button
+                      class={`gcell ${cell?.u_pass ? "pass" : "fail"}`}
+                      data-task={tag}
+                      data-system={s}
+                      aria-label={`${tag} ${systemLabels[s].name} ${cell?.u_pass ? "pass" : "fail"}`}
+                    >{cell?.u_pass ? "✓" : "✗"}</button>
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+          <tr class="totals-row">
+            <th scope="row">Total</th>
+            {systems.map((s) => {
+              const n = taskOrder.filter((t) => grid[t][s]?.u_pass).length;
+              return <td class={`total${systemLabels[s].featured ? " featured" : ""}`}>{n}/{taskOrder.length}</td>;
+            })}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="hint">Click a cell to inspect the agent's actual answer for that task–system pair.</p>
+  </div>
+
+  <!-- System tabs -->
+  <div class="card system-card">
+    <h3 class="card-title">Inspect a system</h3>
+    <div class="system-tabs" role="tablist">
+      {systems.map((s) => (
+        <button
+          class={`sys-tab${systemLabels[s].featured ? " featured" : ""}`}
+          role="tab"
+          data-system={s}
+          aria-selected={s === "md_file" ? "true" : "false"}
+        >
+          {systemLabels[s].featured ? "★ " : ""}{systemLabels[s].name}
+          <span class="tab-llm">{systemLabels[s].internalLLM}</span>
+        </button>
+      ))}
+    </div>
+
+    <!-- Timeline + Sparkline -->
+    <div class="timeline">
+      <div class="tl-graph" id="tl-graph" aria-hidden="true">
+        <!-- SVG injected by JS -->
+      </div>
+      <div class="tl-row" role="tablist" aria-label="Sessions">
+        {sessions.map((sess) => (
+          <button
+            class={`tl-cell ${sess.kind}`}
+            data-session={sess.idx}
+            role="tab"
+            aria-selected={sess.idx === 9 ? "true" : "false"}
+            title={`Session ${sess.idx} · ${sess.timestamp ?? ""}${sess.evidence_type ? " · " + sess.evidence_type : ""}`}
+          >
+            <span class="tl-idx">{sess.idx}</span>
+          </button>
+        ))}
+      </div>
+      <div class="tl-legend">
+        <span><span class="dot filler"></span>filler</span>
+        <span><span class="dot evidence"></span>evidence</span>
+        <span><span class="dot probe-before"></span>probe (before)</span>
+        <span><span class="dot probe-after"></span>probe (after)</span>
+        <span class="series-key">
+          <span class="line-key size"></span>memory size
+          <span class="line-key gold"></span>gold-fact content
+        </span>
+      </div>
+    </div>
+
+    <!-- Detail pane -->
+    <div class="detail-pane" id="detail-pane">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+</section>
+
+<script id="sw033-data" type="application/json" set:html={dataJson}></script>
+
+<script is:inline>
+  (() => {
+    const DATA = JSON.parse(document.getElementById("sw033-data").textContent);
+    const { episode, sessions, systems, systemLabels, snapshots, series, grid, taskOrder, results, baseUrl } = DATA;
+    const BASE = baseUrl || "/";
+
+    const state = {
+      session: 9,
+      system: "md_file",
+      diffMode: "diff", // 'diff' | 'full'
+      expandedTask: null, // string | null
+    };
+
+    // ─── Sparkline (SVG) ─────────────────────────────────────────────
+    const TL_W = 900;
+    const TL_H = 80;
+    const TL_PAD = { top: 8, right: 8, bottom: 4, left: 8 };
+
+    function drawSparkline() {
+      const s = series[state.system];
+      const N = s.size.length;
+      const maxY = Math.max(...s.size, 1);
+      const x = (i) =>
+        TL_PAD.left +
+        (i * (TL_W - TL_PAD.left - TL_PAD.right)) / (N - 1);
+      const y = (v) =>
+        TL_PAD.top +
+        (1 - v / maxY) * (TL_H - TL_PAD.top - TL_PAD.bottom);
+      const pathFor = (arr) =>
+        arr
+          .map((v, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(1)},${y(v).toFixed(1)}`)
+          .join(" ");
+
+      const container = document.getElementById("tl-graph");
+      const sizePath = pathFor(s.size);
+      const goldPath = pathFor(s.gold);
+
+      // y-axis ticks
+      const ticks = [0, 0.5, 1].map((t) => ({
+        y: y(maxY * t),
+        v: Math.round(maxY * t),
+      }));
+
+      container.innerHTML = `
+        <svg viewBox="0 0 ${TL_W} ${TL_H}" preserveAspectRatio="none" class="sparkline">
+          ${ticks
+            .map(
+              (t) =>
+                `<line x1="${TL_PAD.left}" x2="${TL_W - TL_PAD.right}" y1="${t.y}" y2="${t.y}" class="tick"/>`,
+            )
+            .join("")}
+          <path d="${sizePath}" class="line size"/>
+          <path d="${goldPath}" class="line gold"/>
+          ${s.size
+            .map(
+              (_, i) =>
+                `<circle cx="${x(i).toFixed(1)}" cy="${y(s.size[i]).toFixed(1)}" r="2.5" class="dot size${i === state.session ? " active" : ""}"/>` +
+                `<circle cx="${x(i).toFixed(1)}" cy="${y(s.gold[i]).toFixed(1)}" r="2.5" class="dot gold${i === state.session ? " active" : ""}"/>`,
+            )
+            .join("")}
+          ${state.session !== null
+            ? `<line class="sel-line" x1="${x(state.session).toFixed(1)}" x2="${x(state.session).toFixed(1)}" y1="${TL_PAD.top}" y2="${TL_H - TL_PAD.bottom}"/>`
+            : ""}
+          <text x="${TL_W - TL_PAD.right}" y="${TL_H - 6}" text-anchor="end" class="axis-label">${maxY.toLocaleString()} chars</text>
+        </svg>
+      `;
+    }
+
+    // ─── Timeline cell highlight ─────────────────────────────────────
+    function syncTimeline() {
+      document.querySelectorAll(".tl-cell").forEach((el) => {
+        const idx = +el.dataset.session;
+        el.setAttribute("aria-selected", idx === state.session ? "true" : "false");
+        el.classList.toggle("active", idx === state.session);
+      });
+    }
+
+    // ─── System tabs highlight ───────────────────────────────────────
+    function syncTabs() {
+      document.querySelectorAll(".sys-tab").forEach((el) => {
+        const sys = el.dataset.system;
+        el.setAttribute("aria-selected", sys === state.system ? "true" : "false");
+        el.classList.toggle("active", sys === state.system);
+      });
+    }
+
+    // ─── Detail pane ─────────────────────────────────────────────────
+    function escapeHtml(s) {
+      return (s ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function renderConversation(turns) {
+      return turns
+        .map(
+          (t) =>
+            `<div class="turn turn-${t.role}"><span class="role">${escapeHtml(t.role)}</span><div class="bubble">${escapeHtml(t.content)}</div></div>`,
+        )
+        .join("");
+    }
+
+    function renderGoldFacts(facts) {
+      if (!facts.length) return "";
+      return `
+        <div class="gold-facts">
+          <h5>Gold facts introduced</h5>
+          <ul>${facts
+            .map(
+              (f) =>
+                `<li><code>${escapeHtml(f.entity)}</code> = <strong>${escapeHtml(Array.isArray(f.value) ? f.value.join(", ") : f.value)}</strong>${f.notes ? `<em> · ${escapeHtml(f.notes)}</em>` : ""}</li>`,
+            )
+            .join("")}</ul>
+        </div>
+      `;
+    }
+
+    function renderDiff(added) {
+      if (!added || added.length === 0)
+        return `<div class="snap-empty">No new lines added at this session.</div>`;
+      return `<pre class="snap-block diff">${added
+        .map((ln) => `<span class="ln added">${escapeHtml(ln) || "&nbsp;"}</span>`)
+        .join("\n")}</pre>`;
+    }
+
+    async function fetchSnapshot(sys, idx) {
+      const r = await fetch(`${BASE}sw033/snap/${sys}/${idx}.txt`);
+      if (!r.ok) throw new Error("snapshot fetch failed");
+      return await r.text();
+    }
+
+    async function renderFullSnapshot(target, sys, idx, addedSet) {
+      target.innerHTML = `<div class="snap-loading">Loading…</div>`;
+      try {
+        const txt = await fetchSnapshot(sys, idx);
+        // For performance with bm25/dense (large), render in chunks of N lines on scroll.
+        const lines = txt.split("\n");
+        const CHUNK = 200;
+        let rendered = 0;
+        const pre = document.createElement("pre");
+        pre.className = "snap-block full";
+        target.innerHTML = "";
+        target.appendChild(pre);
+
+        const renderChunk = () => {
+          const end = Math.min(rendered + CHUNK, lines.length);
+          const frag = document.createDocumentFragment();
+          for (let i = rendered; i < end; i++) {
+            const ln = lines[i];
+            const span = document.createElement("span");
+            span.className = "ln" + (addedSet.has(ln) ? " added" : "");
+            span.textContent = ln || " ";
+            frag.appendChild(span);
+            if (i < end - 1) frag.appendChild(document.createTextNode("\n"));
+          }
+          pre.appendChild(frag);
+          rendered = end;
+          if (rendered < lines.length) {
+            // Continue on idle
+            requestIdleCallback
+              ? requestIdleCallback(renderChunk)
+              : setTimeout(renderChunk, 16);
+          } else {
+            const meta = document.createElement("div");
+            meta.className = "snap-meta";
+            meta.textContent = `${lines.length.toLocaleString()} lines · ${txt.length.toLocaleString()} chars`;
+            target.appendChild(meta);
+          }
+        };
+        renderChunk();
+      } catch (e) {
+        target.innerHTML = `<div class="snap-error">Failed to load snapshot.</div>`;
+      }
+    }
+
+    function renderSnapshotPane() {
+      const sys = state.system;
+      const idx = state.session;
+      const diff = snapshots[sys].diff[idx];
+      const added = diff?.added ?? [];
+      const removed = diff?.removed ?? [];
+      const sysLabel = systemLabels[sys];
+
+      const header = `
+        <div class="snap-head">
+          <h4>Memory snapshot
+            <span class="snap-sub">${sysLabel.name} · after session ${idx}</span>
+          </h4>
+          <div class="snap-controls">
+            <button class="seg ${state.diffMode === "diff" ? "active" : ""}" data-diff-mode="diff">Diff-only</button>
+            <button class="seg ${state.diffMode === "full" ? "active" : ""}" data-diff-mode="full">Full</button>
+          </div>
+        </div>
+        <div class="snap-summary">
+          <span class="badge added-badge">+${added.length} lines</span>
+          ${removed.length ? `<span class="badge removed-badge">−${removed.length} lines</span>` : ""}
+          <span class="badge size-badge">${(series[sys].size[idx] ?? 0).toLocaleString()} chars total</span>
+        </div>
+      `;
+
+      const body =
+        state.diffMode === "diff"
+          ? `<div class="snap-body">${renderDiff(added)}</div>`
+          : `<div class="snap-body" id="snap-body-full"></div>`;
+
+      return header + body;
+    }
+
+    async function hookFullSnapshot() {
+      if (state.diffMode !== "full") return;
+      const target = document.getElementById("snap-body-full");
+      if (!target) return;
+      const sys = state.system;
+      const idx = state.session;
+      const addedSet = new Set(snapshots[sys].diff[idx]?.added ?? []);
+      await renderFullSnapshot(target, sys, idx, addedSet);
+    }
+
+    function renderSessionPane() {
+      const sess = sessions[state.session];
+      const evtLabel = sess.evidence_type
+        ? `<span class="kind-pill evidence">${escapeHtml(sess.evidence_type)}</span>`
+        : sess.kind === "filler"
+          ? `<span class="kind-pill filler">filler</span>`
+          : "";
+
+      return `
+        <div class="sess-pane">
+          <div class="sess-head">
+            <h4>Session ${sess.idx} ${evtLabel}</h4>
+            <div class="sess-ts">${escapeHtml(sess.timestamp ?? "")}</div>
+          </div>
+          ${renderGoldFacts(sess.gold_facts)}
+          <div class="sess-conv">${renderConversation(sess.conversation)}</div>
+        </div>
+      `;
+    }
+
+    function renderQATrace() {
+      const sess = sessions[state.session];
+      const sys = state.system;
+      const phase = sess.kind === "probe-before" ? "before" : "after";
+      const items = results[sys][phase];
+      const tasks = items;
+
+      const tagMap = {
+        Exact: "ER",
+        "Multi-hop": "Agg",
+        "Multiple-update": "Tr",
+        Deletion: "Del",
+        "Cascade-D (1-hop)": "Cas",
+        "Cascade-U (1-hop)": "Abs",
+      };
+
+      // For "before", drop ER per user preference
+      const filtered = phase === "before" ? tasks.filter((t) => tagMap[t.task_type] !== "ER") : tasks;
+
+      const rows = filtered
+        .map((q) => {
+          const tag = tagMap[q.task_type] ?? q.task_type;
+          const isOpen = state.expandedTask === tag;
+          const passClass = q.u_pass ? "pass" : "fail";
+          const passMark = q.u_pass ? "✓" : "✗";
+          return `
+            <li class="qa-row ${passClass} ${isOpen ? "open" : ""}" data-task="${tag}">
+              <button class="qa-summary">
+                <div class="qa-line qa-q">
+                  <span class="qa-tag ${passClass}">${tag} ${passMark}</span>
+                  <span class="qa-q-text">${escapeHtml(q.question)}</span>
+                </div>
+                <div class="qa-line qa-a">
+                  <span class="qa-label">Agent:</span>
+                  <span class="qa-a-text">${escapeHtml(q.agent_answer)}</span>
+                </div>
+                <div class="qa-line qa-g">
+                  <span class="qa-label">Gold:</span>
+                  <span class="qa-g-text">${escapeHtml(Array.isArray(q.gold_answer) ? q.gold_answer.join(", ") : q.gold_answer)}</span>
+                </div>
+              </button>
+              ${isOpen ? renderQAExpanded(q, phase, sys) : ""}
+            </li>
+          `;
+        })
+        .join("");
+
+      return `
+        <div class="qa-pane">
+          <div class="qa-head">
+            <h4>Q&amp;A trace
+              <span class="qa-sub">${sess.kind === "probe-before" ? "before changes" : "after changes"} · ${systemLabels[sys].name}</span>
+            </h4>
+            <div class="qa-ts">asked at ${escapeHtml(sess.timestamp ?? "")}</div>
+          </div>
+          <ul class="qa-list">${rows}</ul>
+        </div>
+      `;
+    }
+
+    function renderQAExpanded(q, phase, sys) {
+      const reason = q.u_reason
+        ? `<div class="qa-reason"><span class="qa-label">Judge:</span> ${escapeHtml(q.u_reason)}</div>`
+        : "";
+      const tag = (q.task_type ?? "").replace(/[^\w-]+/g, "_");
+      const ctxFile = q.retrieved_context_file;
+      const ctxBlock = ctxFile
+        ? `<div class="qa-ctx" data-system="${sys}" data-phase="${phase}" data-file="${ctxFile}" data-chars="${q.retrieved_context_chars}">
+            <button class="qa-ctx-toggle">Show retrieved context (${q.retrieved_context_chars.toLocaleString()} chars)</button>
+            <div class="qa-ctx-body"></div>
+          </div>`
+        : `<div class="qa-ctx-empty">No retrieved context recorded.</div>`;
+      return `
+        <div class="qa-expanded">
+          ${reason}
+          ${ctxBlock}
+        </div>
+      `;
+    }
+
+    async function loadRetrievedContext(target, file) {
+      target.innerHTML = `<div class="snap-loading">Loading…</div>`;
+      try {
+        const r = await fetch(`${BASE}sw033/retr/${file}`);
+        if (!r.ok) throw new Error("fail");
+        const txt = await r.text();
+        const lines = txt.split("\n");
+        const pre = document.createElement("pre");
+        pre.className = "qa-ctx-pre";
+        // Incremental render
+        let rendered = 0;
+        const CHUNK = 300;
+        target.innerHTML = "";
+        target.appendChild(pre);
+        const step = () => {
+          const end = Math.min(rendered + CHUNK, lines.length);
+          let txt = "";
+          for (let i = rendered; i < end; i++) txt += lines[i] + "\n";
+          pre.appendChild(document.createTextNode(txt));
+          rendered = end;
+          if (rendered < lines.length)
+            requestIdleCallback
+              ? requestIdleCallback(step)
+              : setTimeout(step, 16);
+        };
+        step();
+      } catch (e) {
+        target.innerHTML = `<div class="snap-error">Failed to load.</div>`;
+      }
+    }
+
+    function renderDetailPane() {
+      const sess = sessions[state.session];
+      const isProbe = sess.kind === "probe-before" || sess.kind === "probe-after";
+      const root = document.getElementById("detail-pane");
+      if (isProbe) {
+        root.innerHTML = renderQATrace();
+        root.className = "detail-pane detail-probe";
+      } else {
+        root.innerHTML = `
+          <div class="detail-grid">
+            <div class="detail-left">${renderSessionPane()}</div>
+            <div class="detail-right">${renderSnapshotPane()}</div>
+          </div>
+        `;
+        root.className = "detail-pane detail-normal";
+        hookFullSnapshot();
+      }
+    }
+
+    // ─── Wire events ─────────────────────────────────────────────────
+    document.querySelectorAll(".sys-tab").forEach((el) => {
+      el.addEventListener("click", () => {
+        state.system = el.dataset.system;
+        state.expandedTask = null;
+        render();
+      });
+    });
+
+    document.querySelectorAll(".tl-cell").forEach((el) => {
+      el.addEventListener("click", () => {
+        state.session = +el.dataset.session;
+        state.expandedTask = null;
+        render();
+      });
+    });
+
+    document.querySelectorAll(".gcell").forEach((el) => {
+      el.addEventListener("click", () => {
+        state.system = el.dataset.system;
+        state.session = episode.probe_after_idx;
+        state.expandedTask = el.dataset.task;
+        render();
+        document.getElementById("detail-pane").scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      });
+    });
+
+    // Delegated events for diff toggle and qa rows (re-rendered)
+    document.getElementById("detail-pane").addEventListener("click", (e) => {
+      const seg = e.target.closest("[data-diff-mode]");
+      if (seg) {
+        state.diffMode = seg.dataset.diffMode;
+        render();
+        return;
+      }
+      const qa = e.target.closest(".qa-summary");
+      if (qa) {
+        const tag = qa.closest(".qa-row").dataset.task;
+        state.expandedTask = state.expandedTask === tag ? null : tag;
+        render();
+        return;
+      }
+      const ctxToggle = e.target.closest(".qa-ctx-toggle");
+      if (ctxToggle) {
+        const wrap = ctxToggle.parentElement;
+        const body = wrap.querySelector(".qa-ctx-body");
+        if (body.dataset.loaded === "1") {
+          body.style.display = body.style.display === "none" ? "" : "none";
+        } else {
+          loadRetrievedContext(body, wrap.dataset.file);
+          body.dataset.loaded = "1";
+        }
+        return;
+      }
+    });
+
+    // ─── Render ──────────────────────────────────────────────────────
+    function render() {
+      syncTabs();
+      syncTimeline();
+      drawSparkline();
+      renderDetailPane();
+    }
+
+    render();
+  })();
+</script>
+
+<style>
+  .walkthrough {
+    margin-top: 80px;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+  }
+
+  .wt-head {
+    margin-bottom: 32px;
+  }
+  .wt-eyebrow {
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .wt-head h2 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    letter-spacing: -0.01em;
+  }
+  .wt-head h2 code {
+    background: #f3f3ed;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 22px;
+  }
+  .wt-meta {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .wt-meta code {
+    background: #f3f3ed;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 24px;
+  }
+  .card-title {
+    margin: 0 0 14px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .card-sub {
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--muted);
+  }
+  .hint {
+    margin: 10px 0 0;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* Result grid */
+  .grid-wrap { overflow-x: auto; }
+  .result-grid {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 14px;
+  }
+  .result-grid th,
+  .result-grid td { padding: 6px 8px; text-align: center; }
+  .result-grid th.sys-col {
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 8px;
+    min-width: 88px;
+  }
+  .result-grid .sys-name { display: block; font-weight: 700; font-size: 13px; }
+  .result-grid .sys-llm {
+    display: block;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0;
+    margin-top: 2px;
+  }
+  .result-grid .sys-col.featured {
+    background: linear-gradient(to bottom, #fff8df 0%, transparent 100%);
+  }
+  .result-grid .task-row-label {
+    text-align: left;
+    font-weight: 700;
+    color: var(--fg);
+    border-right: 1px solid var(--border);
+    padding-right: 14px;
+  }
+  .gcell {
+    width: 100%;
+    height: 32px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    font-weight: 800;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.1s ease, transform 0.05s ease;
+  }
+  .gcell:hover { transform: translateY(-1px); }
+  .gcell.pass { color: #1a7c4a; background: #e4f5ea; border-color: #c4e6ce; }
+  .gcell.fail { color: #b94747; background: #fbeaea; border-color: #efc8c8; }
+  .totals-row { font-weight: 700; }
+  .totals-row td { padding-top: 8px; border-top: 1px solid var(--border); }
+  .totals-row .total.featured { background: #fff5cf; border-radius: 6px; }
+
+  /* System tabs */
+  .system-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+  }
+  .sys-tab {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--fg);
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background 0.1s ease, border-color 0.1s ease;
+  }
+  .sys-tab .tab-llm {
+    display: block;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+  .sys-tab:hover { border-color: var(--fg); }
+  .sys-tab.active { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .sys-tab.active .tab-llm { color: rgba(255,255,255,0.7); }
+  .sys-tab.featured { border-color: #c5a335; }
+  .sys-tab.featured.active { background: #b48a1b; border-color: #b48a1b; }
+
+  /* Timeline */
+  .timeline { margin-bottom: 22px; }
+  .tl-graph { width: 100%; height: 80px; margin-bottom: 4px; }
+  .sparkline { width: 100%; height: 80px; display: block; }
+  .sparkline .tick { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 3; }
+  .sparkline .line.size { stroke: #1a1a1a; stroke-width: 1.5; fill: none; }
+  .sparkline .line.gold { stroke: #b48a1b; stroke-width: 1.5; fill: none; stroke-dasharray: 4 2; }
+  .sparkline .dot.size { fill: #1a1a1a; }
+  .sparkline .dot.gold { fill: #b48a1b; }
+  .sparkline .dot.active { r: 4; stroke: #fff; stroke-width: 1.5; }
+  .sparkline .sel-line { stroke: #aaa; stroke-width: 1; stroke-dasharray: 2 2; }
+  .sparkline .axis-label { font-size: 10px; fill: var(--muted); }
+
+  .tl-row {
+    display: grid;
+    grid-template-columns: repeat(17, 1fr);
+    gap: 4px;
+  }
+  .tl-cell {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    border-radius: 6px;
+    padding: 8px 0;
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    transition: transform 0.05s ease, border-color 0.1s ease, background 0.1s ease;
+  }
+  .tl-cell.filler { background: #f3f3ed; }
+  .tl-cell.evidence { background: #d5e8ee; color: #1a4c5b; border-color: #b6d8df; }
+  .tl-cell.probe-before { background: #fff0c8; color: #6b4a00; border-color: #ecd58a; }
+  .tl-cell.probe-after { background: #ffd9a8; color: #663c00; border-color: #e0b272; }
+  .tl-cell.active { outline: 2px solid var(--fg); outline-offset: 1px; }
+  .tl-cell:hover { transform: translateY(-1px); }
+
+  .tl-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .tl-legend .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    vertical-align: middle;
+    margin-right: 5px;
+    border: 1px solid var(--border);
+  }
+  .tl-legend .dot.filler { background: #f3f3ed; }
+  .tl-legend .dot.evidence { background: #d5e8ee; }
+  .tl-legend .dot.probe-before { background: #fff0c8; }
+  .tl-legend .dot.probe-after { background: #ffd9a8; }
+  .series-key { margin-left: auto; display: inline-flex; gap: 12px; }
+  .line-key {
+    display: inline-block;
+    width: 18px;
+    height: 2px;
+    background: #1a1a1a;
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+  .line-key.gold { background: #b48a1b; border-top: 0; }
+
+  /* Detail pane */
+  .detail-pane { min-height: 280px; }
+  .detail-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 18px;
+  }
+  @media (max-width: 760px) {
+    .detail-grid { grid-template-columns: 1fr; }
+  }
+
+  .sess-pane, .snap-head, .qa-pane { font-size: 14px; }
+  .sess-head, .snap-head, .qa-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+    gap: 12px;
+  }
+  .sess-head h4, .snap-head h4, .qa-head h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .snap-head h4 .snap-sub,
+  .qa-head h4 .qa-sub {
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--fg);
+    margin-left: 8px;
+  }
+  .sess-ts, .qa-ts { font-size: 12px; color: var(--muted); }
+  .kind-pill {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: #d5e8ee;
+    color: #1a4c5b;
+    margin-left: 8px;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 600;
+  }
+  .kind-pill.filler { background: #f3f3ed; color: var(--muted); }
+
+  .gold-facts {
+    background: #f7f7f1;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+  }
+  .gold-facts h5 {
+    margin: 0 0 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .gold-facts ul { list-style: none; padding: 0; margin: 0; }
+  .gold-facts li { font-size: 13px; padding: 2px 0; }
+  .gold-facts code {
+    background: #e8e7df;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  .gold-facts em { color: var(--muted); font-style: italic; font-size: 12px; }
+
+  .sess-conv { max-height: 460px; overflow-y: auto; padding-right: 8px; }
+  .turn { margin: 8px 0; }
+  .turn .role {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 2px;
+  }
+  .turn .bubble {
+    background: #f7f7f1;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .turn-assistant .bubble { background: #eef2f5; }
+
+  /* Snapshot pane */
+  .snap-controls { display: inline-flex; gap: 4px; }
+  .seg {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .seg.active { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+  .snap-summary { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: #f3f3ed;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .badge.added-badge { background: #e4f5ea; color: #1a7c4a; }
+  .badge.removed-badge { background: #fbeaea; color: #b94747; }
+
+  .snap-body { max-height: 520px; overflow-y: auto; }
+  .snap-block {
+    margin: 0;
+    padding: 10px 12px;
+    background: #fbfbf6;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.55;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .snap-block .ln { display: block; padding: 1px 4px; border-radius: 3px; }
+  .snap-block .ln.added { background: #e4f5ea; color: #155a35; }
+  .snap-empty, .snap-loading, .snap-error {
+    padding: 12px;
+    background: #fbfbf6;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+  }
+  .snap-meta {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  /* Q&A trace */
+  .qa-pane { font-size: 14px; }
+  .qa-list { list-style: none; padding: 0; margin: 0; }
+  .qa-row {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    background: var(--card);
+  }
+  .qa-row.pass { border-left: 3px solid #1a7c4a; }
+  .qa-row.fail { border-left: 3px solid #b94747; }
+  .qa-summary {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    padding: 12px 14px;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    display: block;
+  }
+  .qa-summary:hover { background: #fbfbf6; }
+  .qa-line {
+    display: flex;
+    gap: 6px;
+    margin: 2px 0;
+    font-size: 13px;
+  }
+  .qa-line.qa-q { font-weight: 700; align-items: center; }
+  .qa-tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 1px 8px;
+    border-radius: 99px;
+    font-weight: 800;
+  }
+  .qa-tag.pass { background: #e4f5ea; color: #1a7c4a; }
+  .qa-tag.fail { background: #fbeaea; color: #b94747; }
+  .qa-label { color: var(--muted); font-weight: 600; min-width: 50px; }
+  .qa-a-text, .qa-g-text {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .qa-expanded {
+    padding: 0 14px 14px;
+    border-top: 1px dashed var(--border);
+    margin-top: 4px;
+  }
+  .qa-reason { margin: 10px 0; font-size: 13px; color: var(--fg); }
+  .qa-ctx-toggle {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .qa-ctx-body {
+    margin-top: 8px;
+    max-height: 360px;
+    overflow-y: auto;
+  }
+  .qa-ctx-pre {
+    margin: 0;
+    padding: 10px;
+    background: #fbfbf6;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .qa-ctx-empty {
+    margin: 10px 0;
+    padding: 10px;
+    background: #fbfbf6;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+  }
+</style>

@@ -1,0 +1,25 @@
+To understand your on-call setup, the relevant knowledge base article is [[concepts/paired-on-call-rotation]].
+
+Here is a thorough synthesis of the on-call setup based on that article:
+
+Your on-call setup uses a paired on-call rotation strategy. This means that two team members share the on-call responsibilities simultaneously rather than having a single person on call alone. The key benefits of this approach include:
+
+- Providing mutual support and backup during the on-call period.
+- Improving incident response times by having two people available.
+- Reducing the risk of single points of failure in incident management.
+- Enhancing the quality and speed of incident resolution.
+
+To make this paired on-call rotation effective, the following practices are important:
+
+- Clear documentation of incidents, responsibilities, and procedures to ensure both on-call members are aligned.
+- Well-defined handoff procedures between on-call pairs to maintain continuity.
+- Regular debriefs after on-call shifts to identify issues and improve the process.
+- Communication and coordination between the paired members to share workload and knowledge.
+
+This setup is designed to improve operational stability and reduce downtime by ensuring that on-call duties are shared and supported.
+
+Additionally, the paired on-call rotation interacts with other operational processes such as escalation procedures and approval authorities, which may be involved when incidents require higher-level decisions or interventions.
+
+In summary, your on-call setup is a paired on-call rotation system that emphasizes collaboration, documentation, and backup to enhance incident management effectiveness and reliability.
+
+Source: [[concepts/paired-on-call-rotation]]

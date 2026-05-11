@@ -1,0 +1,10 @@
+[CONTROLS] The motor driver controls the motors of the mobile robot.
+[DRAINS_LOGS_TO] User's production logs drain to stream.velturis.io/aurora for monitoring and tracking.
+[PAIRS_WITH] The iPhone pairs with the Bluetooth module to communicate with the mobile robot.
+[USES_RESOURCE] User references the incident runbook located at wiki.aurora.dev/incident-response as a useful resource for handling issues.
+[CONTROLS_VIA_BLUETOOTH] The iPhone controls the mobile robot by sending commands via the paired Bluetooth module.
+[USES_CSS_FOR] User uses CSS rules targeting the .modal class to style the modal window and position it at the top of the screen.
+[RECOGNIZES_AS_STAR] Dennis acknowledged Joker as the star of the show and key to the comedy club's success.
+[COMPLAINS_ABOUT] Dee complained that Joker was the only funny person at the competition despite the disaster overall.
+[CONFIGURES] The Settings app on the iPhone is used to enable and manage Bluetooth connections including pairing with the Bluetooth module on the mobile robot.
+[LEADS] Seokjin Kang is the team lead guiding the User and team members through the transition to Synthari Modules.

@@ -1,0 +1,254 @@
+DAILY (2023-03-01):
+
+---
+## Session 1 [2023/03/01 (Wed) 09:00]
+**Context:**  
+User was working on CSS styling to position a modal window at the top of a webpage.
+
+**Key Exchanges:**  
+- User requested CSS code for a modal window fixed at the top of the screen.  
+- Assistant provided CSS with `.modal` fixed at top:0 and `.modal-content` centered vertically using transform translateY(-50%).  
+- User reported the solution did not work and shared their existing CSS.  
+- Assistant advised adjusting `.modal-content` margin to `5% auto 0` to position the modal near the top instead of centered vertically.
+
+**Decisions Made:**  
+- Use `margin: 5% auto 0` on `.modal-content` to place the modal window near the top of the viewport rather than vertically centered, as this better fits the user’s requirement.
+
+**Lessons Learned:**  
+- Vertical centering with `top: 50%` and `transform: translateY(-50%)` centers modal vertically but does not place it at the top.  
+- Adjusting margin-top is a simpler and more effective way to position modal windows near the top of the screen.
+
+**Action Items:**  
+- User to apply the updated margin CSS to `.modal-content` and verify modal appears at the top as intended.
+
+
+DAILY (2023-03-03):
+
+---
+## Session 2 [2023/03/03 (Fri) 05:46]
+**Context:** Discussing best practices and implementation details for consuming messages from Azure Queue Storage, focusing on dead-letter queues.
+
+**Key Exchanges:**
+- Best practice for consuming Azure Queue Storage messages includes using worker roles or Azure Functions with retry and error-handling mechanisms, and employing a lease-based message-processing strategy.
+- Dead-letter queues in Azure Queue Storage are secondary queues to hold messages that fail processing, along with metadata for troubleshooting.
+- Dead-letter queues are not provided by default in Azure Queue Storage; users must implement them by creating secondary queues and handling message moves programmatically.
+- Azure Service Bus Queues/Topics offer built-in dead-letter queue support, unlike Azure Queue Storage.
+
+**Decisions Made:**
+- None explicitly stated; user inquired about dead-letter queue implementation scope but no recommendation was provided yet.
+
+**Lessons Learned:**
+- Azure Queue Storage requires manual implementation of dead-letter queues, unlike Azure Service Bus which has built-in support.
+- Proper error handling and message leasing are critical for reliable message processing.
+
+**Action Items:**
+- Consider whether to implement one dead-letter queue per regular queue or a single dead-letter queue for the entire system (pending user decision).
+
+---
+## Session 3 [2023/03/03 (Fri) 19:59]
+**Context:**  
+User requested explanations of the meaning of "GPT" in ChatGPT tailored to different audience knowledge levels.
+
+**Key Exchanges:**  
+- Explained "GPT" as "Generative Pre-trained Transformer" in simple terms for a 10-year-old, focusing on the model’s ability to create language and its pre-training.  
+- Provided a more technical explanation for an 18-year-old, including the transformer architecture and its role in processing sequential data.  
+- Delivered an in-depth explanation for a college senior in information systems and business analytics, detailing the transformer’s attention mechanism, pre-training, and applications in NLP tasks and industries.
+
+**Lessons Learned:**  
+- Tailoring technical explanations to the audience’s knowledge level improves understanding.  
+- The core components of GPT (generative model, transformer architecture, pre-training) remain consistent but are emphasized differently depending on the audience.
+
+**Action Items:**  
+- None mentioned.
+
+
+DAILY (2023-03-05):
+
+---
+## Session 4 [2023/03/05 (Sun) 11:24]
+**Context:**  
+Discussion on best practices for managing a paired on-call rotation, package management, escalation processes, approval authority, and release-train branching strategy.
+
+**Key Exchanges:**  
+- Paired on-call setup provides backup and faster incident resolution; importance of clear documentation and regular debriefs emphasized.  
+- Karnex Pack used for dependency management; recommended keeping dependencies updated, cleaning unused packages, and documenting configurations.  
+- Kevin Park designated as escalation contact; advised to document escalation criteria and ensure team familiarity.  
+- VP Taehyun Kim is the approval authority; suggested defining clear approval criteria and streamlining the process.  
+- Weekly release-train branching strategy in use; highlighted need for clear branching/merging guidelines and regular team communication.
+
+**Decisions Made:**  
+- Maintain paired on-call rotation with clear handoff and documentation.  
+- Use Kevin Park as the primary escalation contact.  
+- Route key approvals through VP Taehyun Kim with defined criteria.  
+- Continue weekly release-train branching with established branching and merging protocols.
+
+**Lessons Learned:**  
+- Clear documentation and regular reviews improve on-call effectiveness and escalation handling.  
+- Keeping dependencies clean and documented reduces technical debt.  
+- Defined escalation and approval processes reduce confusion and speed decision-making.  
+- Consistent communication is critical for managing branching strategies and avoiding merge conflicts.
+
+**Action Items:**  
+- Periodically gather feedback on on-call rotation effectiveness.  
+- Document escalation criteria and ensure team awareness of Kevin Park’s role.  
+- Create and communicate approval criteria for decisions requiring VP sign-off.  
+- Establish and reinforce branching and merging guidelines within the release-train process.
+
+
+DAILY (2023-03-06):
+
+---
+## Session 5 [2023/03/06 (Mon) 00:21]
+**Context:** Revisión y corrección de párrafos para un documento de tesis sobre procesos industriales en Zinc Nacional y Corporación Tecnológica New Line SA de CV.
+
+**Key Exchanges:**
+- Se revisaron y corrigieron párrafos del planteamiento del problema, justificación y objetivo general para mejorar claridad, precisión, coherencia y redacción.
+- Se definió un objetivo general bajo la premisa de qué se va a hacer, cómo y para qué.
+- Se discutieron características esenciales para la redacción de metas en proyectos y en documentos de tesis, destacando especificidad, medibilidad, alcanzabilidad, relevancia, temporalidad, evaluabilidad, coherencia y comunicabilidad.
+- Se revisó un párrafo complejo sobre el proceso de fabricación de “donas” en la empresa Corporación Tecnológica New Line SA de CV, identificando problemas de claridad, precisión técnica, cohesión y objetividad.
+
+**Decisions Made:**
+- Reformular párrafos para eliminar redundancias, mejorar la precisión técnica y la cohesión entre ideas.
+- Objetivo general estructurado en tres partes: qué se hará, cómo se hará y para qué se hará, para mayor claridad y enfoque.
+- Incorporar características específicas para la redacción de metas en tesis, asegurando alineación con objetivos y metodología.
+
+**Lessons Learned:**
+- La redacción técnica debe ser precisa y evitar ambigüedades para facilitar la comprensión.
+- Dividir oraciones largas y complejas mejora la claridad y la lectura.
+- Metas y objetivos deben ser formulados con criterios claros para facilitar su evaluación y seguimiento.
+- En documentos de tesis, es fundamental que las metas sean coherentes con la hipótesis y permitan el desarrollo metodológico.
+
+**Action Items:**
+- Corregir el párrafo sobre la fabricación de “donas” para mejorar precisión, claridad y objetividad.
+- Continuar revisando y corrigiendo otros párrafos del documento de tesis siguiendo los criterios establecidos.
+
+
+DAILY (2023-03-07):
+
+---
+## Session 6 [2023/03/07 (Tue) 04:35]
+**Context:**  
+Exploring the concept of Monte Carlo simulation, its philosophical relevance, practical applications, and parallels with AI usage.
+
+**Key Exchanges:**  
+- Monte Carlo simulation is a statistical method using random sampling to model uncertainty, applicable in philosophy (e.g., decision theory) depending on user application.  
+- Practical day-to-day uses include risk analysis, decision making, resource allocation, and planning/forecasting.  
+- Concrete example provided: using Monte Carlo simulation to decide between two job offers by modeling uncertainties like cost of living, career advancement, and job satisfaction.  
+- Controversial aspects include reliance on assumptions, computational complexity, and challenges in interpreting results.  
+- AI tools, like Monte Carlo simulation, require appropriate use and understanding of limitations; they assist but do not replace human judgment.
+
+**Decisions Made:**  
+- Emphasized the importance of understanding assumptions and limitations when using Monte Carlo simulations and AI tools to ensure responsible and effective application.
+
+**Lessons Learned:**  
+- Both Monte Carlo simulations and AI tools share the need for careful interpretation and awareness of their constraints to avoid misuse or misinterpretation.  
+- Monte Carlo simulation’s flexibility allows it to be generalized beyond technical fields into everyday decision-making scenarios.
+
+**Action Items:**  
+- None explicitly mentioned.
+
+---
+## Session 7 [2023/03/07 (Tue) 22:16]
+**Context:**  
+Discussing best practices for managing production alerts, package management with Dranith Stack, log structuring, and code review policies.
+
+**Key Exchanges:**  
+- Strategies to reduce alert noise include setting severity-based thresholds, routing less critical alerts to separate channels, alert deduplication, and regularly refining alert rules.  
+- Best practices for Dranith Stack involve semantic versioning, regular dependency updates with thorough testing, and locking dependencies to specific versions or ranges.  
+- Effective log structuring should include consistent formats (e.g., JSON), standardized timestamps, and tags like environment, service name, and severity, plus contextual info such as user or request IDs.  
+- Code review policy requires lead approval for core changes; managing reviews benefits from clear communication, setting response time expectations, constructive and specific feedback, and fostering open discussions.
+
+**Decisions Made:**  
+- Maintain lead approval for core/. to ensure critical changes are properly vetted.  
+- Use severity thresholds and alert deduplication to manage alert noise.  
+- Adopt structured logging with tags and consistent formats for easier analysis.  
+- Implement clear expectations and constructive feedback practices in code reviews.
+
+**Lessons Learned:**  
+- Regularly reviewing and refining alert rules is essential to keep alert noise manageable.  
+- Locking dependencies helps avoid unexpected issues from automatic upgrades.  
+- Including contextual information in logs significantly aids troubleshooting.  
+- Timely and constructive feedback improves the code review process and team collaboration.
+
+**Action Items:**  
+- Review current alert rules and consider implementing deduplication and severity-based routing.  
+- Establish or refine versioning and dependency locking strategies in Dranith Stack.  
+- Standardize log format and tagging conventions for production logs.  
+- Define and communicate code review response time expectations and feedback guidelines.
+
+
+DAILY (2023-03-09):
+
+---
+## Session 8 [2023/03/09 (Thu) 01:48]
+**Context:**  
+User was working on a comedic, unfiltered TV show script blending "It's Always Sunny in Philadelphia" with the Joker as a permanent gang member.
+
+**Key Exchanges:**  
+- The gang decides to start a comedy club featuring the Joker as their star comedian.  
+- The Joker reassures the gang that despite his villainous background, he is just a funny guy in this world.  
+- The gang holds a comedy competition, but contestants fail to amuse the audience.  
+- The Joker saves the competition with his own jokes, becoming the highlight of the show.
+
+**Decisions Made:**  
+- The gang agrees to launch a comedy club leveraging the Joker’s comedic talent to attract audiences.  
+- They decide to hold a comedy competition to discover new talent, despite initial doubts.
+
+**Lessons Learned:**  
+- The Joker’s unique comedic style is the only thing that truly entertains the audience.  
+- The gang’s usual schemes can be salvaged by embracing unexpected elements (like the Joker’s humor).
+
+**Action Items:**  
+- Continue developing the comedy club storyline with the Joker as a central figure.  
+- Explore further comedic scenarios involving the Joker integrated into the gang’s dynamics.
+
+---
+## Session 9 [2023/03/09 (Thu) 13:05]
+**Context:**  
+Analyzing revenue trends in Vietnam using a 10-year SQL dataset to understand a drop in Q4 2022 revenue.
+
+**Key Exchanges:**  
+- User asked why revenue dropped in Vietnam in Q4 2022.  
+- Assistant requested more details and then provided SQL queries to extract revenue data for Q4 over the last 10 years, total revenue for 2022, and average revenues.  
+- User shared query outputs showing Q4 2022 revenue (131.3) was lower than previous years, but total 2022 revenue (412) was higher than the 10-year average (287).  
+- Assistant highlighted the anomaly of a Q4 drop despite a strong overall year and suggested investigating market or economic events in Vietnam during that quarter.
+
+**Decisions Made:**  
+- Conducted multi-level revenue analysis: quarterly trends, yearly totals, and averages over 10 years to contextualize the Q4 2022 drop.  
+- Determined that further external data (market/economic events) is needed to explain the Q4 revenue decline.
+
+**Lessons Learned:**  
+- A drop in quarterly revenue can occur even when the overall annual revenue is strong, indicating possible seasonal or market-specific factors.  
+- Combining historical averages with current year data helps identify anomalies and focus further investigation.
+
+**Action Items:**  
+- Gather information on major market or economic events in Vietnam during Q4 2022.  
+- Consider additional analyses comparing other countries or quarters to isolate factors affecting Vietnam’s Q4 revenue.
+
+
+DAILY (2023-03-10):
+
+---
+## Session 10 [2023/03/10 (Fri) 03:40]
+**Context:** Discussing team workflows and tools during a transition to a new package manager and incident management practices.
+
+**Key Exchanges:**
+- User shared the incident runbook location and asked for feedback on its layout.
+- User mentioned the team switched to Synthari Modules as the package manager and inquired about setup practices.
+- User introduced the team lead, Seokjin Kang, and asked for tips on maintaining communication during transitions.
+- User noted the team’s default branch is trunk and sought advice on managing workflows around it.
+
+**Decisions Made:**
+- The team is transitioning to Synthari Modules to streamline dependency management.
+- The default branch strategy is centered on trunk for integration.
+
+**Lessons Learned:**
+- Effective incident management benefits from a well-organized runbook.
+- Transitioning package managers requires clear setup and communication.
+- Regular check-ins and open feedback channels with team leads improve collaboration during changes.
+- Frequent syncing with trunk and code reviews help maintain smooth integration.
+
+**Action Items:**
+- Continue monitoring the Synthari Modules transition and address any setup challenges.
+- Maintain regular communication with Seokjin Kang to support the transition.
+- Implement or reinforce best practices around trunk branch workflow and integration.

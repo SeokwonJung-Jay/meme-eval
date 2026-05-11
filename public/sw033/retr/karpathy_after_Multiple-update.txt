@@ -1,0 +1,12 @@
+The package managers used over time, from earliest to latest, based on the knowledge base, are:
+
+1. Karnex Pack - Used for dependency management with best practices including keeping dependencies updated, cleaning unused packages, and documenting configurations. This was mentioned in the context of paired on-call rotation and release-train branching strategy discussions around 2023-03-05.
+
+2. Dranith Stack - Another package management system with best practices such as semantic versioning, regular updates with testing, and locking dependencies to specific versions or ranges. Discussed around 2023-03-07.
+
+3. Synthari Modules - The most recent package manager adopted by the team during a transition phase. It is used to streamline dependency management, requiring clear setup practices and communication. This transition was noted around 2023-03-10.
+
+Thus, the chronological order is:
+Karnex Pack → Dranith Stack → Synthari Modules
+
+These details are drawn from the sessions on 2023-03-05, 2023-03-07, and 2023-03-10 respectively [[concepts/karnex-pack-package-management]], [[concepts/dranith-stack-package-management]], [[concepts/synthari-modules-package-management]].

@@ -1,0 +1,95 @@
+DAILY (2023-03-01):
+
+---
+## Session 1 [2023/03/01 (Wed) 09:00]
+**Context:**  
+User was working on CSS styling to position a modal window at the top of a webpage.
+
+**Key Exchanges:**  
+- User requested CSS code for a modal window fixed at the top of the screen.  
+- Assistant provided CSS with `.modal` fixed at top:0 and `.modal-content` centered vertically using transform translateY(-50%).  
+- User reported the solution did not work and shared their existing CSS.  
+- Assistant advised adjusting `.modal-content` margin to `5% auto 0` to position the modal near the top instead of centered vertically.
+
+**Decisions Made:**  
+- Use `margin: 5% auto 0` on `.modal-content` to place the modal window near the top of the viewport rather than vertically centered, as this better fits the user’s requirement.
+
+**Lessons Learned:**  
+- Vertical centering with `top: 50%` and `transform: translateY(-50%)` centers modal vertically but does not place it at the top.  
+- Adjusting margin-top is a simpler and more effective way to position modal windows near the top of the screen.
+
+**Action Items:**  
+- User to apply the updated margin CSS to `.modal-content` and verify modal appears at the top as intended.
+
+
+DAILY (2023-03-03):
+
+---
+## Session 2 [2023/03/03 (Fri) 05:46]
+**Context:** Discussing best practices and implementation details for consuming messages from Azure Queue Storage, focusing on dead-letter queues.
+
+**Key Exchanges:**
+- Best practice for consuming Azure Queue Storage messages includes using worker roles or Azure Functions with retry and error-handling mechanisms, and employing a lease-based message-processing strategy.
+- Dead-letter queues in Azure Queue Storage are secondary queues to hold messages that fail processing, along with metadata for troubleshooting.
+- Dead-letter queues are not provided by default in Azure Queue Storage; users must implement them by creating secondary queues and handling message moves programmatically.
+- Azure Service Bus Queues/Topics offer built-in dead-letter queue support, unlike Azure Queue Storage.
+
+**Decisions Made:**
+- None explicitly stated; user inquired about dead-letter queue implementation scope but no recommendation was provided yet.
+
+**Lessons Learned:**
+- Azure Queue Storage requires manual implementation of dead-letter queues, unlike Azure Service Bus which has built-in support.
+- Proper error handling and message leasing are critical for reliable message processing.
+
+**Action Items:**
+- Consider whether to implement one dead-letter queue per regular queue or a single dead-letter queue for the entire system (pending user decision).
+
+---
+## Session 3 [2023/03/03 (Fri) 19:59]
+**Context:**  
+User requested explanations of the meaning of "GPT" in ChatGPT tailored to different audience knowledge levels.
+
+**Key Exchanges:**  
+- Explained "GPT" as "Generative Pre-trained Transformer" in simple terms for a 10-year-old, focusing on the model’s ability to create language and its pre-training.  
+- Provided a more technical explanation for an 18-year-old, including the transformer architecture and its role in processing sequential data.  
+- Delivered an in-depth explanation for a college senior in information systems and business analytics, detailing the transformer’s attention mechanism, pre-training, and applications in NLP tasks and industries.
+
+**Lessons Learned:**  
+- Tailoring technical explanations to the audience’s knowledge level improves understanding.  
+- The core components of GPT (generative model, transformer architecture, pre-training) remain consistent but are emphasized differently depending on the audience.
+
+**Action Items:**  
+- None mentioned.
+
+
+DAILY (2023-03-05):
+
+---
+## Session 4 [2023/03/05 (Sun) 11:24]
+**Context:**  
+Discussion on best practices for managing a paired on-call rotation, package management, escalation processes, approval authority, and release-train branching strategy.
+
+**Key Exchanges:**  
+- Paired on-call setup provides backup and faster incident resolution; importance of clear documentation and regular debriefs emphasized.  
+- Karnex Pack used for dependency management; recommended keeping dependencies updated, cleaning unused packages, and documenting configurations.  
+- Kevin Park designated as escalation contact; advised to document escalation criteria and ensure team familiarity.  
+- VP Taehyun Kim is the approval authority; suggested defining clear approval criteria and streamlining the process.  
+- Weekly release-train branching strategy in use; highlighted need for clear branching/merging guidelines and regular team communication.
+
+**Decisions Made:**  
+- Maintain paired on-call rotation with clear handoff and documentation.  
+- Use Kevin Park as the primary escalation contact.  
+- Route key approvals through VP Taehyun Kim with defined criteria.  
+- Continue weekly release-train branching with established branching and merging protocols.
+
+**Lessons Learned:**  
+- Clear documentation and regular reviews improve on-call effectiveness and escalation handling.  
+- Keeping dependencies clean and documented reduces technical debt.  
+- Defined escalation and approval processes reduce confusion and speed decision-making.  
+- Consistent communication is critical for managing branching strategies and avoiding merge conflicts.
+
+**Action Items:**  
+- Periodically gather feedback on on-call rotation effectiveness.  
+- Document escalation criteria and ensure team awareness of Kevin Park’s role.  
+- Create and communicate approval criteria for decisions requiring VP sign-off.  
+- Establish and reinforce branching and merging guidelines within the release-train process.
