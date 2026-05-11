@@ -238,9 +238,21 @@ const probeAfter = episode.probe_after_idx;
           <path d="${sizePath}" fill="none" stroke="${STROKE_SIZE}" stroke-width="1.8" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
           <path d="${goldPath}" fill="none" stroke="${STROKE_GOLD}" stroke-width="1.8" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
           ${sel !== null
-            ? `<line x1="${x(sel).toFixed(1)}" x2="${x(sel).toFixed(1)}" y1="${TL_PAD.top}" y2="${TL_H - TL_PAD.bottom}" stroke="#aaa" stroke-width="1" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/>` +
-              `<circle cx="${x(sel).toFixed(1)}" cy="${ySize(s.size[sel]).toFixed(1)}" r="4" fill="${STROKE_SIZE}" stroke="#fff" stroke-width="1.5"/>` +
-              `<circle cx="${x(sel).toFixed(1)}" cy="${yRatio(ratio[sel]).toFixed(1)}" r="4" fill="${STROKE_GOLD}" stroke="#fff" stroke-width="1.5"/>`
+            ? (() => {
+                const xs = x(sel).toFixed(1);
+                const ySz = ySize(s.size[sel]);
+                const yRt = yRatio(ratio[sel]);
+                const labelRight = sel >= N - 4;
+                const labelX = labelRight ? (+xs - 8).toFixed(1) : (+xs + 8).toFixed(1);
+                const anchor = labelRight ? "end" : "start";
+                return (
+                  `<line x1="${xs}" x2="${xs}" y1="${TL_PAD.top}" y2="${TL_H - TL_PAD.bottom}" stroke="#aaa" stroke-width="1" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/>` +
+                  `<circle cx="${xs}" cy="${ySz.toFixed(1)}" r="4" fill="${STROKE_SIZE}" stroke="#fff" stroke-width="1.5"/>` +
+                  `<circle cx="${xs}" cy="${yRt.toFixed(1)}" r="4" fill="${STROKE_GOLD}" stroke="#fff" stroke-width="1.5"/>` +
+                  `<text x="${labelX}" y="${(ySz + 3).toFixed(1)}" fill="${STROKE_SIZE}" font-size="11" font-weight="700" text-anchor="${anchor}">${fmt(s.size[sel])}</text>` +
+                  `<text x="${labelX}" y="${(yRt + 3).toFixed(1)}" fill="${STROKE_GOLD}" font-size="11" font-weight="700" text-anchor="${anchor}">${Math.round(ratio[sel] * 100)}%</text>`
+                );
+              })()
             : ""}
         </svg>
       `;
