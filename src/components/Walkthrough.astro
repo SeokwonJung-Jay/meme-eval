@@ -500,9 +500,8 @@ const probeAfter = episode.probe_after_idx;
           ["Retrieved", fa.retrieved],
           ["Answered", fa.answered],
         ];
-        // mark failure point and dim downstream
         const firstFalse = stages.findIndex(([, v]) => !v);
-        return (
+        const row =
           `<div class="qa-line qa-stages">` +
           stages
             .map(([name, ok], i) => {
@@ -514,8 +513,11 @@ const probeAfter = episode.probe_after_idx;
               return `<span class="${cls}">${name} ${mark}</span>${sep}`;
             })
             .join("") +
-          `</div>`
-        );
+          `</div>`;
+        const note = fa.note
+          ? `<div class="qa-line qa-stage-note" title="${escapeHtml(fa.note)}">${escapeHtml(fa.note)}</div>`
+          : "";
+        return row + note;
       };
 
       const rows = filtered
@@ -1250,6 +1252,14 @@ const probeAfter = episode.probe_after_idx;
   .qa-stages .stage.fail { background: #fbeaea; color: #b94747; font-weight: 800; }
   .qa-stages .stage.dim  { background: #f3f3ed; color: #aaa; }
   .qa-stages .stage-arrow { color: var(--muted); font-size: 11px; margin: 0 2px; }
+
+  .qa-stage-note {
+    font-size: 11px;
+    font-style: italic;
+    color: var(--muted);
+    margin: 2px 0 6px;
+    padding-left: 2px;
+  }
 
   .qa-phase-note {
     font-size: 11px;

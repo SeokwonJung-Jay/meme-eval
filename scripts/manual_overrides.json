@@ -1,0 +1,18 @@
+{
+  "_format": "episode → phase → task → system → {encoded, maintained, retrieved, answered, note?}. Any missing booleans fall back to the algorithmic result.",
+  "_source": "Hand-judged from retrieved_context + probe-time snapshots + paper §4.3 (Figure 4 + per-system failure mode write-up).",
+
+  "sw_033": {
+    "after": {
+      "Cas": {
+        "bm25":         { "encoded": true, "maintained": true, "retrieved": false, "answered": false, "note": "paper §4.3: BM25 — change event is below the top-k cutoff" },
+        "dense":        { "encoded": true, "maintained": true, "retrieved": true,  "answered": false, "note": "paper §4.3: text-embedding-3-small — change event in retrieved context, answering LLM still reports pre-change value" },
+        "graphiti":     { "encoded": true, "maintained": true, "retrieved": false, "answered": false, "note": "paper §4.3 / Figure 4: Graphiti — graph search surfaces rule + pre-change value; change-event edge falls below top-k" },
+        "karpathy":     { "encoded": true, "maintained": true, "retrieved": false, "answered": false, "note": "paper §4.3 / Figure 4: Karpathy Wiki — agent navigates to rule + pre-change source, never opens the daily log holding the change event" },
+        "md_file":      { "encoded": true, "maintained": true, "retrieved": false, "answered": false, "note": "paper §4.3: MD-flat — change event never opened by the tool-use loop" },
+        "mem0":         { "encoded": true, "maintained": true, "retrieved": true,  "answered": false, "note": "paper §4.3: Mem0 — change event in retrieved context, answering LLM still reports pre-change value" },
+        "md_file_opus": { "encoded": true, "maintained": true, "retrieved": true,  "answered": true,  "note": "paper §4.3 / Figure 4: MD-flat × Opus 4.7 — Opus propagates the cascade rule into the store at ingest; retriever surfaces the propagated value directly" }
+      }
+    }
+  }
+}

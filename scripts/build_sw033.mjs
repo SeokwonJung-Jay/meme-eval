@@ -25,6 +25,13 @@ const MAIN_BASE = join(
   "data/v7_100/results/systems_gpt41mini/filler32k_ansMini",
 );
 const OPUS_BASE = join(REPO_ROOT, "data/v7_100/results/systems_opus47/filler32k");
+const OVERRIDES_PATH = resolve(__dirname, "manual_overrides.json");
+let MANUAL_OVERRIDES = {};
+try {
+  MANUAL_OVERRIDES = JSON.parse(readFileSync(OVERRIDES_PATH, "utf-8"));
+} catch (e) {
+  // optional
+}
 
 const SYSTEMS_MAIN = ["bm25", "dense", "graphiti", "karpathy", "md_file", "mem0"];
 const OPUS_SYS = "md_file"; // only md_file × Opus is featured
@@ -381,10 +388,22 @@ function main() {
           }
         }
 
-        const maintained = isDelAfter ? hasDelEvent(probeSnap) : hasValue(probeSnap);
-        const retrieved = isDelAfter ? hasDelEvent(ctx) : hasValue(ctx);
+        let maintained = isDelAfter ? hasDelEvent(probeSnap) : hasValue(probeSnap);
+        let retrieved = isDelAfter ? hasDelEvent(ctx) : hasValue(ctx);
 
-        const answered = !!d.u_pass;
+        let answered = !!d.u_pass;
+
+        // ─── Manual overrides (paper-grounded or hand-judged) take precedence ──
+        const override =
+          MANUAL_OVERRIDES?.sw_033?.[phase]?.[taskTag]?.[sysLabel] ?? null;
+        let overrideNote = null;
+        if (override) {
+          if (typeof override.encoded === "boolean") encoded = override.encoded;
+          if (typeof override.maintained === "boolean") maintained = override.maintained;
+          if (typeof override.retrieved === "boolean") retrieved = override.retrieved;
+          if (typeof override.answered === "boolean") answered = override.answered;
+          if (override.note) overrideNote = override.note;
+        }
 
         let failure_stage = null;
         if (!encoded) failure_stage = "encoding";
@@ -404,7 +423,7 @@ function main() {
           entity: d.entity ?? [],
           entity_values: d.entity_values ?? {},
           pass_type: d.pass_type ?? null,
-          failure_analysis: { encoded, maintained, retrieved, answered, failure_stage },
+          failure_analysis: { encoded, maintained, retrieved, answered, failure_stage, note: overrideNote },
         };
       });
 
