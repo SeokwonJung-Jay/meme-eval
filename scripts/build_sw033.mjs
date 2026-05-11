@@ -213,11 +213,16 @@ function main() {
     addEntity(ep.root, "Abs");
   }
 
-  // Build cumulative gold-fact list per session — only entities that map to at least one task tag.
+  // Two views of the gold-fact list:
+  //   • perSessionFacts[i]  – only facts introduced AT session i (used to tag added lines).
+  //   • cumFactsByIdx[i]    – every fact introduced up to and including session i
+  //                            (used to tag removed lines + count gold-fact %).
+  const perSessionFacts = [];
   const cumFactsByIdx = [];
   const cumFacts = [];
   for (let i = 0; i < ep.sessions.length; i++) {
     const facts = ep.sessions[i].gold_facts ?? [];
+    const local = [];
     for (const f of facts) {
       const tags = entityToTask[f.entity];
       if (!tags || tags.size === 0) continue;
@@ -225,9 +230,12 @@ function main() {
       const vals = Array.isArray(f.value) ? f.value : [f.value];
       for (const v of vals) {
         if (!v) continue;
-        cumFacts.push({ entity: f.entity, value: v, tags: tagList, tok: tokenSet(v) });
+        const entry = { entity: f.entity, value: v, tags: tagList, tok: tokenSet(v) };
+        local.push(entry);
+        cumFacts.push(entry);
       }
     }
+    perSessionFacts.push(local);
     cumFactsByIdx.push([...cumFacts]);
   }
   const sessionGoldTokenSetsCumulative = cumFactsByIdx.map((arr) => arr.map((f) => f.tok));
@@ -297,10 +305,11 @@ function main() {
       const prev = i === 0 ? "" : snaps[i - 1];
       const curr = snaps[i];
       const { added, removed } = lineDiff(prev, curr);
-      const facts = cumFactsByIdx[i];
+      // Added lines describe facts introduced THIS session.
+      // Removed lines came from facts introduced earlier (use cumulative pool).
       diffPerSession.push({
-        added: annotateLines(added, facts),
-        removed: annotateLines(removed, facts),
+        added: annotateLines(added, perSessionFacts[i]),
+        removed: annotateLines(removed, cumFactsByIdx[i]),
       });
       sizeSeries.push(curr.length);
       goldCharsSeries.push(countGoldChars(curr, sessionGoldTokenSetsCumulative[i]));
