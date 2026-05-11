@@ -249,8 +249,8 @@ const probeAfter = episode.probe_after_idx;
                   `<line x1="${xs}" x2="${xs}" y1="${TL_PAD.top}" y2="${TL_H - TL_PAD.bottom}" stroke="#aaa" stroke-width="1" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/>` +
                   `<circle cx="${xs}" cy="${ySz.toFixed(1)}" r="4" fill="${STROKE_SIZE}" stroke="#fff" stroke-width="1.5"/>` +
                   `<circle cx="${xs}" cy="${yRt.toFixed(1)}" r="4" fill="${STROKE_GOLD}" stroke="#fff" stroke-width="1.5"/>` +
-                  `<text x="${labelX}" y="${(ySz + 3).toFixed(1)}" fill="${STROKE_SIZE}" font-size="11" font-weight="700" text-anchor="${anchor}">${fmt(s.size[sel])}</text>` +
-                  `<text x="${labelX}" y="${(yRt + 3).toFixed(1)}" fill="${STROKE_GOLD}" font-size="11" font-weight="700" text-anchor="${anchor}">${Math.round(ratio[sel] * 100)}%</text>`
+                  `<text x="${labelX}" y="${(ySz - 7).toFixed(1)}" fill="${STROKE_SIZE}" font-size="11" font-weight="700" text-anchor="${anchor}">${fmt(s.size[sel])}</text>` +
+                  `<text x="${labelX}" y="${(yRt + 14).toFixed(1)}" fill="${STROKE_GOLD}" font-size="11" font-weight="700" text-anchor="${anchor}">${Math.round(ratio[sel] * 100)}%</text>`
                 );
               })()
             : ""}
