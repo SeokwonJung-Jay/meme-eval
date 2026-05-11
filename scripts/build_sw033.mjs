@@ -329,22 +329,18 @@ function main() {
         : JSON.stringify(e.memory_snapshot ?? "", null, 2),
     );
 
-    // Compute per-session diff (added/removed lines) with task-tag annotations + size/gold series
+    // Compute per-session diff (added/removed lines) with task-tag annotations + size series
     const diffPerSession = [];
     const sizeSeries = [];
-    const goldCharsSeries = [];
     for (let i = 0; i < snaps.length; i++) {
       const prev = i === 0 ? "" : snaps[i - 1];
       const curr = snaps[i];
       const { added, removed } = lineDiff(prev, curr);
-      // Added lines describe facts introduced THIS session.
-      // Removed lines came from facts introduced earlier (use cumulative pool).
       diffPerSession.push({
         added: annotateLines(added, perSessionFacts[i]),
         removed: annotateLines(removed, cumFactsByIdx[i]),
       });
       sizeSeries.push(curr.length);
-      goldCharsSeries.push(countGoldChars(curr, sessionGoldTokenSetsCumulative[i]));
     }
 
     // Write each full snapshot as separate text file for lazy load
@@ -352,12 +348,26 @@ function main() {
       writeText(join(PUBLIC_SNAP, sysLabel, `${i}.txt`), s);
     });
 
-    // Apply hand-pinned line-level tag overrides (e.g. strip Tr from inquiry / advice lines)
+    // Apply hand-pinned line-level tag overrides BEFORE computing gold-fact %
     applyAnnotationOverrides(
       diffPerSession,
       MANUAL_OVERRIDES?.sw_033?.annotation_overrides ?? [],
       sysLabel,
     );
+
+    // Gold-fact % series: cumulative chars of currently-tagged diff lines.
+    // Adds tagged lines as they appear and subtracts tagged removed lines.
+    const goldCharsSeries = [];
+    let cumTagged = 0;
+    for (let i = 0; i < diffPerSession.length; i++) {
+      for (const ln of diffPerSession[i].added) {
+        if (ln.tags && ln.tags.length) cumTagged += (ln.text ?? "").length;
+      }
+      for (const ln of diffPerSession[i].removed) {
+        if (ln.tags && ln.tags.length) cumTagged -= (ln.text ?? "").length;
+      }
+      goldCharsSeries.push(Math.max(0, cumTagged));
+    }
 
     snapshotsPerSystem[sysLabel] = {
       // diff arrays kept inline (small per session)
