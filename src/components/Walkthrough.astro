@@ -101,27 +101,54 @@ const probeAfter = episode.probe_after_idx;
       <div class="tl-graph" id="tl-graph" aria-hidden="true">
         <!-- SVG injected by JS -->
       </div>
+
+      <!-- Probe events: evaluation moments, NOT a session. Shown above the session row -->
+      <div class="tl-probe-row" aria-label="Probe events">
+        {sessions.map((sess) => {
+          const isBefore = sess.kind === "probe-before";
+          const isAfter = sess.kind === "probe-after";
+          if (isBefore || isAfter) {
+            const which = isBefore ? "before" : "after";
+            return (
+              <button
+                class={`probe-marker probe-${which}`}
+                data-probe={which}
+                title={`Probe (${which}-questions)`}
+              >
+                <span class="probe-arrow" aria-hidden="true">▼</span>
+                <span class="probe-label">probe {which}</span>
+              </button>
+            );
+          }
+          return <div class="probe-slot" aria-hidden="true"></div>;
+        })}
+      </div>
+
       <div class="tl-row" role="tablist" aria-label="Sessions">
-        {sessions.map((sess) => (
-          <button
-            class={`tl-cell ${sess.kind}`}
-            data-session={sess.idx}
-            role="tab"
-            aria-selected={sess.idx === 9 ? "true" : "false"}
-            title={`Session ${sess.idx} · ${sess.timestamp ?? ""}`}
-          >
-            <span class="tl-idx">{sess.idx}</span>
-          </button>
-        ))}
+        {sessions.map((sess) => {
+          // probe sessions are still real filler sessions data-wise; treat as such visually
+          const baseKind =
+            sess.kind === "evidence" ? "evidence" : "filler";
+          return (
+            <button
+              class={`tl-cell ${baseKind}`}
+              data-session={sess.idx}
+              role="tab"
+              aria-selected={sess.idx === 9 ? "true" : "false"}
+              title={`Session ${sess.idx} · ${sess.timestamp ?? ""}`}
+            >
+              <span class="tl-idx">{sess.idx}</span>
+            </button>
+          );
+        })}
       </div>
       <div class="tl-legend">
-        <span><span class="dot filler"></span>filler</span>
-        <span><span class="dot evidence"></span>evidence</span>
-        <span><span class="dot probe-before"></span>probe (before)</span>
-        <span><span class="dot probe-after"></span>probe (after)</span>
+        <span><span class="dot filler"></span>filler session</span>
+        <span><span class="dot evidence"></span>evidence session</span>
+        <span><span class="probe-mini">▼</span>probe (evaluation event)</span>
         <span class="series-key">
           <span class="line-key size"></span>memory size
-          <span class="line-key gold"></span>gold-fact content
+          <span class="line-key gold"></span>gold-fact %
         </span>
       </div>
     </div>
@@ -146,6 +173,7 @@ const probeAfter = episode.probe_after_idx;
       system: "md_file",
       diffMode: "diff", // 'diff' | 'full'
       expandedTask: null, // string | null
+      probeMode: null, // null | 'before' | 'after'
     };
 
     // ─── Sparkline (SVG) ─────────────────────────────────────────────
@@ -214,12 +242,17 @@ const probeAfter = episode.probe_after_idx;
       `;
     }
 
-    // ─── Timeline cell highlight ─────────────────────────────────────
+    // ─── Timeline cell + probe marker highlight ───────────────────────
     function syncTimeline() {
       document.querySelectorAll(".tl-cell").forEach((el) => {
         const idx = +el.dataset.session;
-        el.setAttribute("aria-selected", idx === state.session ? "true" : "false");
-        el.classList.toggle("active", idx === state.session);
+        const isActive = !state.probeMode && idx === state.session;
+        el.setAttribute("aria-selected", isActive ? "true" : "false");
+        el.classList.toggle("active", isActive);
+      });
+      document.querySelectorAll(".probe-marker").forEach((el) => {
+        const which = el.dataset.probe;
+        el.classList.toggle("active", state.probeMode === which);
       });
     }
 
@@ -421,9 +454,10 @@ const probeAfter = episode.probe_after_idx;
     }
 
     function renderQATrace() {
-      const sess = sessions[state.session];
       const sys = state.system;
-      const phase = sess.kind === "probe-before" ? "before" : "after";
+      const phase = state.probeMode; // 'before' | 'after'
+      const probeIdx = phase === "before" ? episode.probe_before_idx : episode.probe_after_idx;
+      const probeTs = phase === "before" ? episode.probe_before_timestamp : episode.probe_after_timestamp;
       const items = results[sys][phase];
       const tasks = items;
 
@@ -470,10 +504,10 @@ const probeAfter = episode.probe_after_idx;
       return `
         <div class="qa-pane">
           <div class="qa-head">
-            <h4>Q&amp;A trace
-              <span class="qa-sub">${sess.kind === "probe-before" ? "before changes" : "after changes"} · ${systemLabels[sys].name}</span>
+            <h4>Probe Q&amp;A trace
+              <span class="qa-sub">${phase === "before" ? "before-questions" : "after-questions"} · ${systemLabels[sys].name}</span>
             </h4>
-            <div class="qa-ts">asked at ${escapeHtml(sess.timestamp ?? "")}</div>
+            <div class="qa-ts">evaluation event after session ${probeIdx} · ${escapeHtml(probeTs ?? "")}</div>
           </div>
           <ul class="qa-list">${rows}</ul>
         </div>
@@ -532,10 +566,8 @@ const probeAfter = episode.probe_after_idx;
     }
 
     function renderDetailPane() {
-      const sess = sessions[state.session];
-      const isProbe = sess.kind === "probe-before" || sess.kind === "probe-after";
       const root = document.getElementById("detail-pane");
-      if (isProbe) {
+      if (state.probeMode) {
         root.innerHTML = renderQATrace();
         root.className = "detail-pane detail-probe";
       } else {
@@ -562,6 +594,15 @@ const probeAfter = episode.probe_after_idx;
     document.querySelectorAll(".tl-cell").forEach((el) => {
       el.addEventListener("click", () => {
         state.session = +el.dataset.session;
+        state.probeMode = null;
+        state.expandedTask = null;
+        render();
+      });
+    });
+
+    document.querySelectorAll(".probe-marker").forEach((el) => {
+      el.addEventListener("click", () => {
+        state.probeMode = el.dataset.probe;
         state.expandedTask = null;
         render();
       });
@@ -570,7 +611,7 @@ const probeAfter = episode.probe_after_idx;
     document.querySelectorAll(".gcell").forEach((el) => {
       el.addEventListener("click", () => {
         state.system = el.dataset.system;
-        state.session = episode.probe_after_idx;
+        state.probeMode = "after";
         state.expandedTask = el.dataset.task;
         render();
         document.getElementById("detail-pane").scrollIntoView({
@@ -792,15 +833,22 @@ const probeAfter = episode.probe_after_idx;
   .sparkline .axis-label { font-size: 10px; fill: var(--muted); }
   .sparkline .sel-x { font-size: 11px; fill: var(--fg); font-weight: 600; }
 
-  .tl-row {
+  /* Align timeline + probe row so each box CENTER lines up with the SVG data point at the same index.
+     SVG has TL_PAD.left = 50 (out of TL_W = 900) ⇒ data points span 5.56% to 94.44% of the chart width.
+     With 17 equal cells (gap=0) and padding-x = (100% × 50) / 1800 ≈ 2.78%, cell centers land exactly on those positions. */
+  .tl-row,
+  .tl-probe-row {
     display: grid;
     grid-template-columns: repeat(17, 1fr);
-    gap: 4px;
+    gap: 0;
+    padding-left: calc(100% * 50 / 1800);
+    padding-right: calc(100% * 50 / 1800);
   }
   .tl-cell {
     border: 1px solid var(--border);
     background: var(--bg);
     border-radius: 6px;
+    margin: 0 2px;
     padding: 8px 0;
     cursor: pointer;
     font-size: 11px;
@@ -810,10 +858,41 @@ const probeAfter = episode.probe_after_idx;
   }
   .tl-cell.filler { background: #f3f3ed; }
   .tl-cell.evidence { background: #d5e8ee; color: #1a4c5b; border-color: #b6d8df; }
-  .tl-cell.probe-before { background: #fff0c8; color: #6b4a00; border-color: #ecd58a; }
-  .tl-cell.probe-after { background: #ffd9a8; color: #663c00; border-color: #e0b272; }
   .tl-cell.active { outline: 2px solid var(--fg); outline-offset: 1px; }
   .tl-cell:hover { transform: translateY(-1px); }
+
+  /* Probe markers: separate evaluation events, not sessions */
+  .tl-probe-row {
+    margin-bottom: 4px;
+  }
+  .probe-slot { visibility: hidden; }
+  .probe-marker {
+    background: transparent;
+    border: 0;
+    padding: 2px 0 4px;
+    margin: 0 2px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    line-height: 1;
+  }
+  .probe-marker .probe-arrow {
+    font-size: 14px;
+    line-height: 1;
+  }
+  .probe-marker.probe-before .probe-arrow { color: #c08a1a; }
+  .probe-marker.probe-after .probe-arrow { color: #b86a18; }
+  .probe-marker .probe-label {
+    font-size: 9px;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-top: 1px;
+    white-space: nowrap;
+  }
+  .probe-marker.active .probe-arrow { transform: scale(1.25); }
+  .probe-marker.active .probe-label { color: var(--fg); font-weight: 700; }
 
   .tl-legend {
     display: flex;
