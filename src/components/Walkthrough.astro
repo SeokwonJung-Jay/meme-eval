@@ -492,6 +492,7 @@ const probeAfter = episode.probe_after_idx;
               <button class="qa-summary">
                 <div class="qa-line qa-q">
                   <span class="qa-tag ${passClass}">${tag} ${passMark}</span>
+                  ${phase === "before" ? `<span class="qa-phase-note">(before change or delete)</span>` : ""}
                   <span class="qa-q-text">${escapeHtml(q.question)}</span>
                 </div>
                 <div class="qa-line qa-a">
@@ -1171,6 +1172,12 @@ const probeAfter = episode.probe_after_idx;
   }
   .qa-tag.pass { background: #e4f5ea; color: #1a7c4a; }
   .qa-tag.fail { background: #fbeaea; color: #b94747; }
+  .qa-phase-note {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+    font-weight: 500;
+  }
   .qa-label { color: var(--muted); font-weight: 600; min-width: 50px; }
   .qa-a-text, .qa-g-text {
     white-space: pre-wrap;
