@@ -321,7 +321,7 @@ const probeAfter = episode.probe_after_idx;
             .map((f) => {
               const chips = tagChips(f.tags);
               const val = Array.isArray(f.value) ? f.value.join(", ") : f.value;
-              return `<li>${chips}<code>${escapeHtml(f.entity)}</code> = <strong>${escapeHtml(val)}</strong>${f.notes ? `<em> · ${escapeHtml(f.notes)}</em>` : ""}</li>`;
+              return `<li>${chips}<code>${escapeHtml(f.entity)}</code> = <strong>${escapeHtml(val)}</strong></li>`;
             })
             .join("")}</ul>
         </div>
