@@ -53,24 +53,12 @@ function fmtCost(v: number | null) {
         </tr>
       </thead>
       <tbody>
-        {groups.map((g, gi) => (
+        {groups.map((g) => (
           <>
-            {g.rows.some((r) => r.subset) && (
-              <tr class="avg-row">
-                <th scope="row">{average.label}</th>
-                {task_order.map((t) => {
-                  if (t === "Overall") {
-                    return <td class="overall">{fmtRate(average.overall)}</td>;
-                  }
-                  const danger = t === "Cas" || t === "Abs";
-                  return <td class={danger ? "danger" : ""}>{fmtRate(average.rates[t])}</td>;
-                })}
-                <td class="cost-col">—</td>
-                <td class="cost-col">—</td>
-              </tr>
-            )}
             <tr class="group-row">
-              <td colspan={task_order.length + 3}><em>{g.label}</em></td>
+              <td colspan={task_order.length - 1 + 1}><em>{g.label}</em></td>
+              <td class="overall"></td>
+              <td colspan="2"></td>
             </tr>
             {g.rows.map((row) => (
               <tr class="row">
@@ -104,6 +92,18 @@ function fmtCost(v: number | null) {
             ))}
           </>
         ))}
+        <tr class="avg-row">
+          <th scope="row">{average.label}</th>
+          {task_order.map((t) => {
+            if (t === "Overall") {
+              return <td class="overall">{fmtRate(average.overall)}</td>;
+            }
+            const danger = t === "Cas" || t === "Abs";
+            return <td class={danger ? "danger" : ""}>{fmtRate(average.rates[t])}</td>;
+          })}
+          <td class="cost-col">—</td>
+          <td class="cost-col">—</td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -215,13 +215,12 @@ function fmtCost(v: number | null) {
     background: #f7f7f1;
   }
   .mr-table tbody .overall {
-    font-weight: 700;
+    font-weight: 500;
   }
-  /* Highlight Cas/Abs success for Opus closure row */
+  /* Highlight Cas/Abs success for Opus closure row — text color only */
   .mr-table tbody .row .success {
     color: #1a7c4a;
     font-weight: 700;
-    background: #e4f5ea;
   }
   .mr-table tbody .cost-col {
     font-variant-numeric: tabular-nums;
