@@ -37,10 +37,10 @@
       "Del": {
         "bm25":         { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "raw chunk retention preserves the explicit 'Please delete that from your memory' utterance; surfaced at query time" },
         "dense":        { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "raw chunk retention surfaces the deletion utterance" },
-        "graphiti":     { "encoded": false, "maintained": false, "retrieved": false, "answered": false, "note": "graphiti's ingest at session 14 only adds Jihoon Ryu / #aurora-core edges; the deletion intent never becomes an edge" },
-        "karpathy":     { "encoded": false, "maintained": false, "retrieved": false, "answered": false, "note": "no entry in karpathy's wiki or daily log records the deletion of log_drain_endpoint" },
-        "md_file":      { "encoded": false, "maintained": false, "retrieved": false, "answered": false, "note": "MD-flat rewrites memory.md without removing the log_drain line and without adding a deletion marker" },
-        "mem0":         { "encoded": false, "maintained": false, "retrieved": false, "answered": false, "note": "mem0's fact decomposition keeps the original log_drain fact but writes no deletion event" },
+        "graphiti":     { "encoded": false, "maintained": false, "retrieved": false, "answered": false, "note": "graphiti's session-14 ingest only adds Jihoon Ryu / #aurora-core edges; the deletion intent never becomes an edge" },
+        "karpathy":     { "encoded": true,  "maintained": true,  "retrieved": false, "answered": false, "note": "karpathy's daily log for 2023-03-17 records the deletion request, but the query agent only opens the log_structuring concept article and never reaches the daily log" },
+        "md_file":      { "encoded": false, "maintained": false, "retrieved": false, "answered": false, "note": "MD-flat rewrites memory.md but keeps the original log_drain line and writes no deletion marker; the deletion intent is lost at ingest" },
+        "mem0":         { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": false, "note": "mem0 records the deletion request as a separate fact ('User requested deletion of the log drain endpoint...') in addition to the original log_drain fact; retrieval surfaces both at probe time, yet the answering LLM still reports the endpoint instead of acknowledging the deletion" },
         "md_file_opus": { "encoded": true,  "maintained": true,  "retrieved": true,  "answered": true,  "note": "Opus performs the deletion in place: log_drain_endpoint is absent from the probe-time store, retrieval correctly returns no relevant facts, and the answering LLM responds with 'no information'" }
       },
 
@@ -64,6 +64,31 @@
         "md_file_opus": { "encoded": false, "maintained": false, "retrieved": false, "answered": false, "note": "Opus rewrites the multi-line error_log into a short paraphrase at ingest, losing verbatim fidelity; matches paper's note that MD-flat × Opus degrades Exact Recall" }
       }
     },
+
+    "annotation_overrides": [
+      { "system": "bm25", "session": 3, "text_contains": "Assistant: Having a paired on-call setup", "tags": [] },
+      { "system": "bm25", "session": 3, "text_contains": "Have you worked with Karnex Pack before?", "tags": [] },
+      { "system": "bm25", "session": 3, "text_contains": "Assistant: I haven't worked directly with Karnex Pack", "tags": [] },
+      { "system": "bm25", "session": 6, "text_contains": "Assistant: Using Dranith Stack can streamline", "tags": [] },
+      { "system": "bm25", "session": 9, "text_contains": "Assistant: I haven't worked with Synthari Modules specifically", "tags": [] },
+
+      { "system": "dense", "session": 3, "text_contains": "Assistant: Having a paired on-call setup", "tags": [] },
+      { "system": "dense", "session": 3, "text_contains": "Have you worked with Karnex Pack before?", "tags": [] },
+      { "system": "dense", "session": 3, "text_contains": "Assistant: I haven't worked directly with Karnex Pack", "tags": [] },
+      { "system": "dense", "session": 6, "text_contains": "Assistant: Using Dranith Stack can streamline", "tags": [] },
+      { "system": "dense", "session": 9, "text_contains": "Assistant: I haven't worked with Synthari Modules specifically", "tags": [] },
+
+      { "system": "graphiti", "session": 9, "text_contains": "User maintains communication with Seokjin Kang during the package manager transition", "tags": [] },
+
+      { "system": "karpathy", "session": 6, "text_contains": "Discussing best practices for managing production alerts", "tags": [] },
+      { "system": "karpathy", "session": 6, "text_contains": "Best practices for Dranith Stack involve semantic versioning", "tags": [] },
+      { "system": "karpathy", "session": 6, "text_contains": "Establish or refine versioning and dependency locking", "tags": [] },
+      { "system": "karpathy", "session": 9, "text_contains": "Continue monitoring the Synthari Modules transition", "tags": [] },
+      { "system": "karpathy", "session": 9, "text_contains": "Maintain regular communication with Seokjin Kang", "tags": [] },
+
+      { "system": "mem0", "session": 3, "text_contains": "User inquires about best practices for managing packages with Karnex Pack", "tags": [] },
+      { "system": "mem0", "session": 6, "text_contains": "User was advised to optimize Dranith Stack usage by establishing a clear versioning strategy", "tags": [] }
+    ],
 
     "before": {
       "Cas": {

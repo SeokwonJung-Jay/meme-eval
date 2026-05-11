@@ -136,10 +136,7 @@ function countGoldChars(snapshot, goldTokenSets) {
 }
 
 // Annotate each line with the set of task tags whose gold value matches it.
-// Each line is assigned the tags from the SINGLE best-matching fact, where the
-// score is `containment(value_tok, line_tok) + entityName_bonus`. This prevents
-// e.g. a "team_lead is X, transitioning to Synthari Modules" line from picking
-// up package_manager's [Tr] just because the rival fact's value also appears.
+// Single best-matching fact wins (containment + entity-name bonus).
 function annotateLines(lines, factPool) {
   return lines.map((text) => {
     if (!text) return { text, tags: [] };
@@ -155,6 +152,28 @@ function annotateLines(lines, factPool) {
     }
     return { text, tags: best.tags };
   });
+}
+
+// Hand-pinned line-level annotation overrides. Each rule matches by
+// (system, sessionIdx, substring of line text) and replaces the tag list.
+function applyAnnotationOverrides(diffPerSession, rules, systemKey) {
+  if (!rules || !rules.length) return diffPerSession;
+  const sysRules = rules.filter((r) => r.system === systemKey);
+  if (!sysRules.length) return diffPerSession;
+  for (let i = 0; i < diffPerSession.length; i++) {
+    const sessRules = sysRules.filter((r) => r.session === i);
+    if (!sessRules.length) continue;
+    for (const side of ["added", "removed"]) {
+      for (const ln of diffPerSession[i][side]) {
+        for (const r of sessRules) {
+          if (r.text_contains && ln.text && ln.text.includes(r.text_contains)) {
+            ln.tags = r.tags ?? [];
+          }
+        }
+      }
+    }
+  }
+  return diffPerSession;
 }
 
 function loadAgent(base, sys) {
@@ -332,6 +351,13 @@ function main() {
     snaps.forEach((s, i) => {
       writeText(join(PUBLIC_SNAP, sysLabel, `${i}.txt`), s);
     });
+
+    // Apply hand-pinned line-level tag overrides (e.g. strip Tr from inquiry / advice lines)
+    applyAnnotationOverrides(
+      diffPerSession,
+      MANUAL_OVERRIDES?.sw_033?.annotation_overrides ?? [],
+      sysLabel,
+    );
 
     snapshotsPerSystem[sysLabel] = {
       // diff arrays kept inline (small per session)

@@ -514,10 +514,7 @@ const probeAfter = episode.probe_after_idx;
             })
             .join("") +
           `</div>`;
-        const note = fa.note
-          ? `<div class="qa-line qa-stage-note" title="${escapeHtml(fa.note)}">${escapeHtml(fa.note)}</div>`
-          : "";
-        return row + note;
+        return row;
       };
 
       const rows = filtered
