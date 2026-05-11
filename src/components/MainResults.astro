@@ -1,0 +1,214 @@
+---
+import data from "../data/main_results.json";
+
+const { task_order, task_long, groups, average, best_per_task_main } = data;
+
+function fmtRate(v: number) {
+  return v.toFixed(2);
+}
+function fmtCost(v: number | null) {
+  if (v === null || v === undefined) return "—";
+  if (v === 0) return "$0.00";
+  return `$${v.toFixed(2)}`;
+}
+---
+
+<section class="main-results" aria-labelledby="mr-title">
+  <header class="mr-head">
+    <h2 id="mr-title">
+      <span class="mr-eyebrow">Overall result</span>
+      Per-task accuracy across six memory systems
+    </h2>
+    <p class="mr-meta">
+      All systems use <code>gpt-4.1-mini</code> as both internal and answering LLM on 100 episodes
+      (filler ≈ 32K tokens). Best per task within the six main systems is in <strong>bold</strong>.
+      Cascade, Absence, and Deletion use trivial-pass filtering.
+    </p>
+  </header>
+
+  <div class="mr-wrap">
+    <table class="mr-table">
+      <thead>
+        <tr>
+          <th scope="col" class="lbl-col">System</th>
+          {task_order.map((t) => (
+            <th scope="col" title={task_long[t]}>{t}</th>
+          ))}
+          <th scope="col" class="cost-col" colspan="2">Cost $/ep</th>
+        </tr>
+        <tr class="sub-head">
+          <th></th>
+          {task_order.map(() => <th></th>)}
+          <th class="cost-col">Ingest</th>
+          <th class="cost-col">Inference</th>
+        </tr>
+      </thead>
+      <tbody>
+        {groups.map((g) => (
+          <>
+            <tr class="group-row">
+              <td colspan={task_order.length + 3}><em>{g.label}</em></td>
+            </tr>
+            {g.rows.map((row) => (
+              <tr class={row.featured ? "row featured" : "row"}>
+                <th scope="row" class="sys-name">
+                  {row.featured ? <span class="star">★</span> : null}
+                  {row.system}
+                  <span class="sys-llm">{row.internalLLM}{row.subset ? " · 20 ep" : ""}</span>
+                </th>
+                {task_order.map((t) => {
+                  if (t === "Overall") {
+                    return <td class="overall">{fmtRate(row.overall)}</td>;
+                  }
+                  const v = row.rates[t];
+                  const isBest = !row.subset && best_per_task_main[t] === row.system;
+                  return (
+                    <td class={isBest ? "best" : ""}>
+                      {isBest ? <strong>{fmtRate(v)}</strong> : fmtRate(v)}
+                    </td>
+                  );
+                })}
+                <td class="cost-col">{fmtCost(row.cost.ingest)}</td>
+                <td class="cost-col">{fmtCost(row.cost.inference)}</td>
+              </tr>
+            ))}
+          </>
+        ))}
+        <tr class="avg-row">
+          <th scope="row">{average.label}</th>
+          {task_order.map((t) =>
+            t === "Overall" ? (
+              <td class="overall">{fmtRate(average.overall)}</td>
+            ) : (
+              <td>{fmtRate(average.rates[t])}</td>
+            ),
+          )}
+          <td class="cost-col">—</td>
+          <td class="cost-col">—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<style>
+  .main-results {
+    margin-top: 64px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+  .mr-head {
+    margin-bottom: 18px;
+  }
+  .mr-eyebrow {
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .mr-head h2 {
+    margin: 0 0 6px;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+  }
+  .mr-meta {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .mr-meta code {
+    background: #f3f3ed;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  .mr-wrap {
+    overflow-x: auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+  }
+  .mr-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .mr-table th,
+  .mr-table td {
+    text-align: center;
+    padding: 5px 8px;
+    vertical-align: middle;
+  }
+  .mr-table thead th {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+  .mr-table thead tr.sub-head th {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 4px;
+    padding-top: 0;
+    font-size: 11px;
+    text-transform: none;
+  }
+  .mr-table tbody .group-row td {
+    text-align: left;
+    padding: 12px 4px 4px;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border: 0;
+  }
+  .mr-table tbody .row .sys-name {
+    text-align: left;
+    font-weight: 600;
+  }
+  .mr-table tbody .row .sys-llm {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .mr-table tbody .row.featured {
+    background: #fff8df;
+  }
+  .mr-table tbody .row.featured .sys-name .star {
+    color: #b48a1b;
+    margin-right: 4px;
+  }
+  .mr-table tbody .overall {
+    font-weight: 700;
+    background: #f7f7f1;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+  .mr-table tbody .cost-col {
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .mr-table tbody .row.featured .cost-col {
+    color: var(--fg);
+  }
+  .mr-table tbody .row .best strong {
+    font-weight: 800;
+  }
+  .mr-table tbody .avg-row {
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-style: italic;
+    font-size: 12px;
+  }
+  .mr-table tbody .avg-row th {
+    text-align: left;
+    font-weight: 600;
+  }
+</style>

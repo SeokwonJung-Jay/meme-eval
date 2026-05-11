@@ -1,0 +1,98 @@
+{
+  "task_order": ["ER", "Agg", "Tr", "Del", "Cas", "Abs", "Overall"],
+  "task_long": {
+    "ER": "Exact Recall",
+    "Agg": "Aggregation",
+    "Tr": "Tracking",
+    "Del": "Deletion",
+    "Cas": "Cascade",
+    "Abs": "Absence",
+    "Overall": "Overall"
+  },
+  "groups": [
+    {
+      "label": "Raw retrieval",
+      "rows": [
+        {
+          "system": "BM25",
+          "internalLLM": "gpt-4.1-mini",
+          "rates": {"ER": 1.00, "Agg": 0.05, "Tr": 0.16, "Del": 0.27, "Cas": 0.02, "Abs": 0.00},
+          "overall": 0.25,
+          "cost": {"ingest": null, "inference": 0.04}
+        },
+        {
+          "system": "text-emb-3-small",
+          "internalLLM": "gpt-4.1-mini",
+          "rates": {"ER": 0.96, "Agg": 0.33, "Tr": 0.46, "Del": 0.17, "Cas": 0.04, "Abs": 0.00},
+          "overall": 0.33,
+          "cost": {"ingest": null, "inference": 0.03}
+        }
+      ]
+    },
+    {
+      "label": "LLM-processed memory",
+      "rows": [
+        {
+          "system": "Mem0",
+          "internalLLM": "gpt-4.1-mini",
+          "rates": {"ER": 0.67, "Agg": 0.35, "Tr": 0.43, "Del": 0.21, "Cas": 0.03, "Abs": 0.00},
+          "overall": 0.28,
+          "cost": {"ingest": 0.10, "inference": 0.01}
+        },
+        {
+          "system": "Graphiti",
+          "internalLLM": "gpt-4.1-mini",
+          "rates": {"ER": 0.03, "Agg": 0.01, "Tr": 0.04, "Del": 0.09, "Cas": 0.02, "Abs": 0.01},
+          "overall": 0.03,
+          "cost": {"ingest": 0.55, "inference": 0.00}
+        }
+      ]
+    },
+    {
+      "label": "File-based agents",
+      "rows": [
+        {
+          "system": "MD-flat",
+          "internalLLM": "gpt-4.1-mini",
+          "rates": {"ER": 0.94, "Agg": 0.45, "Tr": 0.77, "Del": 0.25, "Cas": 0.06, "Abs": 0.05},
+          "overall": 0.42,
+          "cost": {"ingest": 0.04, "inference": 0.01}
+        },
+        {
+          "system": "Karpathy Wiki",
+          "internalLLM": "gpt-4.1-mini",
+          "rates": {"ER": 0.11, "Agg": 0.18, "Tr": 0.27, "Del": 0.03, "Cas": 0.01, "Abs": 0.02},
+          "overall": 0.10,
+          "cost": {"ingest": 1.17, "inference": 0.22}
+        }
+      ]
+    },
+    {
+      "label": "Internal-LLM swap (20-ep subset)",
+      "rows": [
+        {
+          "system": "MD-flat × Opus 4.7",
+          "internalLLM": "claude-opus-4-7",
+          "rates": {"ER": 0.60, "Agg": 0.80, "Tr": 0.20, "Del": 0.80, "Cas": 0.32, "Abs": 0.59},
+          "overall": 0.55,
+          "cost": {"ingest": 3.87, "inference": 0.66},
+          "featured": true,
+          "subset": true
+        }
+      ]
+    }
+  ],
+  "average": {
+    "label": "Average (six main systems)",
+    "rates": {"ER": 0.62, "Agg": 0.23, "Tr": 0.35, "Del": 0.17, "Cas": 0.03, "Abs": 0.01},
+    "overall": 0.24
+  },
+  "best_per_task_main": {
+    "ER": "BM25",
+    "Agg": "MD-flat",
+    "Tr": "MD-flat",
+    "Del": "BM25",
+    "Cas": "MD-flat",
+    "Abs": "MD-flat"
+  }
+}

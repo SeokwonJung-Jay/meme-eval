@@ -56,7 +56,7 @@ const probeAfter = episode.probe_after_idx;
                       data-task={tag}
                       data-system={s}
                       aria-label={`${tag} ${systemLabels[s].name} ${cell?.u_pass ? "pass" : "fail"}`}
-                    >{cell?.u_pass ? "✓" : "✗"}</button>
+                    >{cell?.u_pass ? "✔" : "✘"}</button>
                   </td>
                 );
               })}
@@ -395,7 +395,7 @@ const probeAfter = episode.probe_after_idx;
           const tag = tagMap[q.task_type] ?? q.task_type;
           const isOpen = state.expandedTask === tag;
           const passClass = q.u_pass ? "pass" : "fail";
-          const passMark = q.u_pass ? "✓" : "✗";
+          const passMark = q.u_pass ? "✔" : "✘";
           return `
             <li class="qa-row ${passClass} ${isOpen ? "open" : ""}" data-task="${tag}">
               <button class="qa-summary">

@@ -1,0 +1,84 @@
+---
+const tasks = ["ER", "Agg", "Tr", "Del", "Cas", "Abs"];
+const rows = [
+  { name: "RULER", coverage: ["ER"] },
+  { name: "NoLiMa", coverage: ["ER"] },
+  { name: "LoCoMo", coverage: ["ER", "Agg", "Tr"] },
+  { name: "LongMemEval", coverage: ["ER", "Agg", "Tr", "Del"] },
+  { name: "MemBench", coverage: ["ER", "Tr"] },
+  { name: "MemoryAgentBench", coverage: ["ER", "Agg", "Tr", "Del"] },
+  { name: "MEME (ours)", coverage: tasks, featured: true },
+];
+---
+
+<aside class="tab1" aria-labelledby="tab1-title">
+  <h3 id="tab1-title">Task coverage vs existing benchmarks</h3>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        {tasks.map((t) => <th>{t}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((r) => (
+        <tr class={r.featured ? "featured" : ""}>
+          <th scope="row">{r.name}</th>
+          {tasks.map((t) => (
+            <td class={r.coverage.includes(t) ? "yes" : "no"}>
+              {r.coverage.includes(t) ? "✔" : "✘"}
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</aside>
+
+<style>
+  .tab1 h3 {
+    margin: 0 0 8px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .tab1 table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 13px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .tab1 th,
+  .tab1 td {
+    padding: 5px 8px;
+    text-align: center;
+  }
+  .tab1 thead th {
+    font-size: 11px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+  }
+  .tab1 tbody th[scope="row"] {
+    text-align: left;
+    font-weight: 600;
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .tab1 tbody tr.featured {
+    background: #fff8df;
+  }
+  .tab1 tbody td.yes {
+    color: #1a7c4a;
+    font-weight: 800;
+  }
+  .tab1 tbody td.no {
+    color: #c66;
+    font-weight: 800;
+  }
+</style>
