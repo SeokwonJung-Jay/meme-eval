@@ -528,7 +528,7 @@ const probeAfter = episode.probe_after_idx;
             <li class="qa-row ${passClass} ${isOpen ? "open" : ""}" data-task="${tag}">
               <button class="qa-summary">
                 <div class="qa-line qa-q">
-                  <span class="qa-tag ${passClass}">${tag} ${passMark}</span>
+                  <span class="qa-tag chip-${tag}">${tag}</span>
                   ${phase === "before" ? `<span class="qa-phase-note">(before change or delete)</span>` : ""}
                   <span class="qa-q-text">${escapeHtml(q.question)}</span>
                 </div>
@@ -1154,7 +1154,14 @@ const probeAfter = episode.probe_after_idx;
   .snap-block .ln { display: block; padding: 1px 4px; border-radius: 3px; }
   .snap-block .ln.added { background: #e4f5ea; color: #155a35; }
   .snap-block .ln.removed { background: #fbeaea; color: #8b2828; }
-  /* Task-tag chips (unified across Gold facts card and snapshot diff) */
+  /* Task-tag color palette (shared between Gold-facts card, snapshot diff, and Q&A row tag) */
+  .chip-ER  { background: #6b7280; color: #fff; }
+  .chip-Agg { background: #0e9594; color: #fff; }
+  .chip-Tr  { background: #185fa5; color: #fff; }
+  .chip-Del { background: #b8860b; color: #fff; }
+  .chip-Cas { background: #c23535; color: #fff; }
+  .chip-Abs { background: #7e22ce; color: #fff; }
+  /* Compact chips for the gold-facts card + diff lines */
   .ln-chip {
     display: inline-block;
     font-size: 9px;
@@ -1163,17 +1170,10 @@ const probeAfter = episode.probe_after_idx;
     padding: 1px 6px;
     border-radius: 4px;
     margin-right: 5px;
-    color: #fff;
     line-height: 1.4;
     vertical-align: 1px;
     text-transform: uppercase;
   }
-  .ln-chip.chip-ER  { background: #6b7280; }
-  .ln-chip.chip-Agg { background: #0e9594; }
-  .ln-chip.chip-Tr  { background: #185fa5; }
-  .ln-chip.chip-Del { background: #b8860b; }
-  .ln-chip.chip-Cas { background: #c23535; }
-  .ln-chip.chip-Abs { background: #7e22ce; }
   .snap-empty, .snap-loading, .snap-error {
     padding: 12px;
     background: #fbfbf6;
@@ -1223,10 +1223,13 @@ const probeAfter = episode.probe_after_idx;
   .qa-line.qa-q { font-weight: 700; align-items: center; }
   .qa-tag {
     display: inline-block;
-    font-size: 11px;
-    padding: 1px 8px;
-    border-radius: 99px;
+    font-size: 13px;
+    padding: 3px 10px;
+    border-radius: 5px;
     font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-right: 8px;
   }
   /* Pipeline stage badges in a Q&A row */
   .qa-line.qa-stages {
@@ -1248,8 +1251,6 @@ const probeAfter = episode.probe_after_idx;
   .qa-stages .stage.dim  { background: #f3f3ed; color: #aaa; }
   .qa-stages .stage-arrow { color: var(--muted); font-size: 11px; margin: 0 2px; }
 
-  .qa-tag.pass { background: #e4f5ea; color: #1a7c4a; }
-  .qa-tag.fail { background: #fbeaea; color: #b94747; }
   .qa-phase-note {
     font-size: 11px;
     color: var(--muted);
