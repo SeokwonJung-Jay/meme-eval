@@ -464,21 +464,26 @@ const probeAfter = episode.probe_after_idx;
       const items = results[sys][phase];
       const tasks = items;
 
-      const tagMap = {
-        Exact: "ER",
-        "Multi-hop": "Agg",
-        "Multiple-update": "Tr",
-        Deletion: "Del",
-        "Cascade-D (1-hop)": "Cas",
-        "Cascade-U (1-hop)": "Abs",
+      // Judge files use different task_type strings between before/after
+      // (e.g. "Exact" vs "Exact (exact recall)", "Deletion" vs "Deletion (before delete)").
+      // Map by prefix so both forms collapse to the same short tag.
+      const toTag = (t) => {
+        if (!t) return "?";
+        if (t.startsWith("Cascade-D")) return "Cas";
+        if (t.startsWith("Cascade-U")) return "Abs";
+        if (t.startsWith("Deletion")) return "Del";
+        if (t.startsWith("Exact")) return "ER";
+        if (t.startsWith("Multi-hop")) return "Agg";
+        if (t.startsWith("Multiple-update")) return "Tr";
+        return t;
       };
 
       // For "before", drop ER per user preference
-      const filtered = phase === "before" ? tasks.filter((t) => tagMap[t.task_type] !== "ER") : tasks;
+      const filtered = phase === "before" ? tasks.filter((t) => toTag(t.task_type) !== "ER") : tasks;
 
       const rows = filtered
         .map((q) => {
-          const tag = tagMap[q.task_type] ?? q.task_type;
+          const tag = toTag(q.task_type);
           const isOpen = state.expandedTask === tag;
           const passClass = q.u_pass ? "pass" : "fail";
           const passMark = q.u_pass ? "✓" : "✗";
