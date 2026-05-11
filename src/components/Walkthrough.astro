@@ -327,17 +327,27 @@ const probeAfter = episode.probe_after_idx;
       `;
     }
 
+    function tagChips(tags) {
+      if (!tags || tags.length === 0) return "";
+      return tags
+        .map((t) => `<span class="ln-chip chip-${t}">${t}</span>`)
+        .join("");
+    }
     function renderDiff(added, removed) {
       const a = added || [];
       const r = removed || [];
       if (a.length === 0 && r.length === 0)
         return `<div class="snap-empty">No diff at this session.</div>`;
-      const aBlock = a
-        .map((ln) => `<span class="ln added">+ ${escapeHtml(ln) || "&nbsp;"}</span>`)
-        .join("\n");
-      const rBlock = r
-        .map((ln) => `<span class="ln removed">− ${escapeHtml(ln) || "&nbsp;"}</span>`)
-        .join("\n");
+      const lineHtml = (sign, item) => {
+        // item may be a string (older format) or {text, tags}
+        const text = typeof item === "string" ? item : item.text ?? "";
+        const tags = typeof item === "string" ? [] : item.tags ?? [];
+        const chips = tagChips(tags);
+        const safe = escapeHtml(text) || "&nbsp;";
+        return `<span class="ln ${sign === "+" ? "added" : "removed"}">${chips}${sign} ${safe}</span>`;
+      };
+      const aBlock = a.map((i) => lineHtml("+", i)).join("\n");
+      const rBlock = r.map((i) => lineHtml("−", i)).join("\n");
       const sep = aBlock && rBlock ? "\n" : "";
       return `<pre class="snap-block diff">${aBlock}${sep}${rBlock}</pre>`;
     }
@@ -481,6 +491,32 @@ const probeAfter = episode.probe_after_idx;
       // For "before", drop ER per user preference
       const filtered = phase === "before" ? tasks.filter((t) => toTag(t.task_type) !== "ER") : tasks;
 
+      const stagesHtml = (fa) => {
+        if (!fa) return "";
+        const stages = [
+          ["Encoded", fa.encoded],
+          ["Maintained", fa.maintained],
+          ["Retrieved", fa.retrieved],
+          ["Answered", fa.answered],
+        ];
+        // mark failure point and dim downstream
+        const firstFalse = stages.findIndex(([, v]) => !v);
+        return (
+          `<div class="qa-line qa-stages">` +
+          stages
+            .map(([name, ok], i) => {
+              const failHere = firstFalse !== -1 && i === firstFalse;
+              const dim = firstFalse !== -1 && i > firstFalse;
+              const cls = failHere ? "stage fail" : ok ? "stage pass" : dim ? "stage dim" : "stage pass";
+              const mark = ok ? "✓" : "✗";
+              const sep = i < stages.length - 1 ? `<span class="stage-arrow">→</span>` : "";
+              return `<span class="${cls}">${name} ${mark}</span>${sep}`;
+            })
+            .join("") +
+          `</div>`
+        );
+      };
+
       const rows = filtered
         .map((q) => {
           const tag = toTag(q.task_type);
@@ -495,6 +531,7 @@ const probeAfter = episode.probe_after_idx;
                   ${phase === "before" ? `<span class="qa-phase-note">(before change or delete)</span>` : ""}
                   <span class="qa-q-text">${escapeHtml(q.question)}</span>
                 </div>
+                ${stagesHtml(q.failure_analysis)}
                 <div class="qa-line qa-a">
                   <span class="qa-label">Agent:</span>
                   <span class="qa-a-text">${escapeHtml(q.agent_answer)}</span>
@@ -1116,6 +1153,24 @@ const probeAfter = episode.probe_after_idx;
   .snap-block .ln { display: block; padding: 1px 4px; border-radius: 3px; }
   .snap-block .ln.added { background: #e4f5ea; color: #155a35; }
   .snap-block .ln.removed { background: #fbeaea; color: #8b2828; }
+  /* Task-tag chips inline on annotated diff lines */
+  .snap-block .ln-chip {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    padding: 0 5px;
+    border-radius: 3px;
+    margin-right: 4px;
+    color: #fff;
+    vertical-align: 1px;
+  }
+  .ln-chip.chip-ER  { background: #6b7280; }
+  .ln-chip.chip-Agg { background: #0e9594; }
+  .ln-chip.chip-Tr  { background: #185fa5; }
+  .ln-chip.chip-Del { background: #b8860b; }
+  .ln-chip.chip-Cas { background: #c23535; }
+  .ln-chip.chip-Abs { background: #7e22ce; }
   .snap-empty, .snap-loading, .snap-error {
     padding: 12px;
     background: #fbfbf6;
@@ -1170,6 +1225,26 @@ const probeAfter = episode.probe_after_idx;
     border-radius: 99px;
     font-weight: 800;
   }
+  /* Pipeline stage badges in a Q&A row */
+  .qa-line.qa-stages {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 6px 0 4px;
+  }
+  .qa-stages .stage {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .qa-stages .stage.pass { background: #e4f5ea; color: #1a7c4a; }
+  .qa-stages .stage.fail { background: #fbeaea; color: #b94747; font-weight: 800; }
+  .qa-stages .stage.dim  { background: #f3f3ed; color: #aaa; }
+  .qa-stages .stage-arrow { color: var(--muted); font-size: 11px; margin: 0 2px; }
+
   .qa-tag.pass { background: #e4f5ea; color: #1a7c4a; }
   .qa-tag.fail { background: #fbeaea; color: #b94747; }
   .qa-phase-note {

@@ -33,9 +33,68 @@ function readJson(path) {
   return JSON.parse(readFileSync(path, "utf-8"));
 }
 
+// ─── Token-level matcher (paraphrase-robust) ──────────────────────────
+const STOPWORDS = new Set([
+  "a","an","the","is","are","was","were","be","been","being",
+  "of","to","in","on","at","and","or","but","for","with",
+  "our","my","your","his","her","its","their","this","that","these","those",
+  "i","you","we","they","it","user","team",
+  "have","has","had","as","by","from","into","onto",
+  "will","would","can","could","should","may","might",
+  "do","does","did","not","no",
+]);
+function tokenize(s) {
+  if (!s) return [];
+  return s.toLowerCase().replace(/[^\w\s]/g, " ").split(/\s+/).filter(
+    (w) => w && !STOPWORDS.has(w) && w.length > 1,
+  );
+}
+function tokenSet(s) { return new Set(tokenize(s)); }
+function containment(goldSet, candSet) {
+  if (goldSet.size === 0) return 0;
+  let n = 0;
+  for (const t of goldSet) if (candSet.has(t)) n++;
+  return n / goldSet.size;
+}
+const MATCH_THRESHOLD = 0.6;
+function lineMatchesValue(line, valueTok, threshold = MATCH_THRESHOLD) {
+  if (valueTok.size === 0) return false;
+  return containment(valueTok, tokenSet(line)) >= threshold;
+}
+function textHasValue(text, valueTok, threshold = MATCH_THRESHOLD) {
+  if (!text) return false;
+  for (const line of text.split("\n")) {
+    if (line && lineMatchesValue(line, valueTok, threshold)) return true;
+  }
+  return false;
+}
+
+// Multi-line-aware match: gold's full token set against the whole text's token set.
+// Useful for verbatim payloads that span multiple lines (e.g. error_log).
+function textHasValueBulk(text, valueTok, threshold = MATCH_THRESHOLD) {
+  if (!text || valueTok.size === 0) return false;
+  return containment(valueTok, tokenSet(text)) >= threshold;
+}
+
+// Deletion semantics: a "delete event" is encoded in the store if any line mentions
+// the relevant value (preferred — unique) or entity along with a deletion keyword.
+const DELETION_KEYWORDS = ["delete", "deleted", "deleting", "remove", "removed", "removing", "no longer", "discard"];
+function hasDeletionEvent(text, entityTok, valueToks) {
+  if (!text) return false;
+  for (const line of text.split("\n")) {
+    if (!line) continue;
+    const low = line.toLowerCase();
+    if (!DELETION_KEYWORDS.some((kw) => low.includes(kw))) continue;
+    const lTok = tokenSet(line);
+    for (const vt of valueToks ?? []) {
+      if (vt.size > 0 && containment(vt, lTok) >= 0.5) return true;
+    }
+    if (entityTok && entityTok.size > 0 && containment(entityTok, lTok) >= 0.6) return true;
+  }
+  return false;
+}
+
 function lineDiff(prev, curr) {
-  // Returns added lines (in curr but not prev) and removed lines.
-  // Uses multiset semantics on line strings.
   const prevLines = (prev ?? "").split("\n");
   const currLines = (curr ?? "").split("\n");
   const prevCount = new Map();
@@ -51,23 +110,35 @@ function lineDiff(prev, curr) {
   return { added, removed };
 }
 
-function countGoldChars(snapshot, goldValuesUpToHere) {
-  // For each line, if it substring-matches any gold value, count its chars.
-  // De-dup at line level.
-  if (!snapshot || !goldValuesUpToHere.length) return 0;
+// Token-level gold-fact char count: a line counts if any gold token-set
+// has containment ≥ threshold in that line's token-set.
+function countGoldChars(snapshot, goldTokenSets) {
+  if (!snapshot || !goldTokenSets.length) return 0;
   let total = 0;
   for (const line of snapshot.split("\n")) {
     if (!line) continue;
-    for (const v of goldValuesUpToHere) {
-      if (!v) continue;
-      // case-insensitive substring
-      if (line.toLowerCase().includes(v.toLowerCase())) {
+    const lTok = tokenSet(line);
+    for (const gSet of goldTokenSets) {
+      if (containment(gSet, lTok) >= MATCH_THRESHOLD) {
         total += line.length;
         break;
       }
     }
   }
   return total;
+}
+
+// Annotate each line with the set of task tags whose gold value matches it.
+function annotateLines(lines, cumFactsWithTok) {
+  return lines.map((text) => {
+    if (!text) return { text, tags: [] };
+    const tags = new Set();
+    const lTok = tokenSet(text);
+    for (const f of cumFactsWithTok) {
+      if (containment(f.tok, lTok) >= MATCH_THRESHOLD) tags.add(f.tag);
+    }
+    return { text, tags: [...tags] };
+  });
 }
 
 function loadAgent(base, sys) {
@@ -111,19 +182,36 @@ function writeText(path, text) {
 function main() {
   const ep = readJson(EPISODE_PATH);
 
-  // Build per-session gold_values cumulative — pulled from each session's gold_facts list
-  const sessionGoldValuesCumulative = []; // array of arrays of values up to and including i
-  const cumulative = [];
-  for (let i = 0; i < ep.sessions.length; i++) {
-    const sess = ep.sessions[i];
-    const facts = sess.gold_facts ?? [];
-    for (const f of facts) {
-      const v = f.value;
-      if (Array.isArray(v)) for (const x of v) cumulative.push(x);
-      else if (v) cumulative.push(v);
-    }
-    sessionGoldValuesCumulative.push([...cumulative]);
+  // Entity → task tag map (drawn from after-questions, which covers all 6 tasks)
+  const TAG_MAP_SHORT = {
+    Exact: "ER", "Multi-hop": "Agg", "Multiple-update": "Tr",
+    Deletion: "Del", "Cascade-D (1-hop)": "Cas", "Cascade-U (1-hop)": "Abs",
+    ER: "ER", Agg: "Agg", Tr: "Tr", Del: "Del", Cas: "Cas", Abs: "Abs",
+  };
+  const entityToTask = {};
+  for (const q of ep.after_questions?.questions ?? []) {
+    const tag = TAG_MAP_SHORT[q.task_type] ?? q.task_type;
+    for (const e of q.entity ?? []) entityToTask[e] = tag;
   }
+
+  // Build cumulative gold-fact list per session — each entry: {entity, value, tag, tok}.
+  const cumFactsByIdx = [];
+  const cumFacts = [];
+  for (let i = 0; i < ep.sessions.length; i++) {
+    const facts = ep.sessions[i].gold_facts ?? [];
+    for (const f of facts) {
+      const tag = entityToTask[f.entity];
+      if (!tag) continue;
+      const vals = Array.isArray(f.value) ? f.value : [f.value];
+      for (const v of vals) {
+        if (!v) continue;
+        cumFacts.push({ entity: f.entity, value: v, tag, tok: tokenSet(v) });
+      }
+    }
+    cumFactsByIdx.push([...cumFacts]);
+  }
+  // Token-only view used by countGoldChars
+  const sessionGoldTokenSetsCumulative = cumFactsByIdx.map((arr) => arr.map((f) => f.tok));
 
   // Probe positions
   const beforeIdx = ep.before_questions.position_after_session; // 13
@@ -177,7 +265,7 @@ function main() {
         : JSON.stringify(e.memory_snapshot ?? "", null, 2),
     );
 
-    // Compute per-session diff (added lines) and gold-fact char count + size series
+    // Compute per-session diff (added/removed lines) with task-tag annotations + size/gold series
     const diffPerSession = [];
     const sizeSeries = [];
     const goldCharsSeries = [];
@@ -185,9 +273,13 @@ function main() {
       const prev = i === 0 ? "" : snaps[i - 1];
       const curr = snaps[i];
       const { added, removed } = lineDiff(prev, curr);
-      diffPerSession.push({ added, removed });
+      const facts = cumFactsByIdx[i];
+      diffPerSession.push({
+        added: annotateLines(added, facts),
+        removed: annotateLines(removed, facts),
+      });
       sizeSeries.push(curr.length);
-      goldCharsSeries.push(countGoldChars(curr, sessionGoldValuesCumulative[i]));
+      goldCharsSeries.push(countGoldChars(curr, sessionGoldTokenSetsCumulative[i]));
     }
 
     // Write each full snapshot as separate text file for lazy load
@@ -204,11 +296,63 @@ function main() {
     // Results — pull u_check.after.details and u_check.before.details
     const buildResults = (details, phase) =>
       details.map((d, idx) => {
-        // Externalize large retrieved_context
         const ctx = d.retrieved_context ?? "";
         const tag = (d.task_type ?? `q${idx}`).replace(/[^\w-]+/g, "_");
         const ctxFile = `${sysLabel}_${phase}_${tag}.txt`;
         if (ctx) writeText(join(PUBLIC_RETR, ctxFile), ctx);
+
+        // ── Pipeline-stage failure analysis ────────────────────────────
+        const taskTag = TAG_MAP_SHORT[d.task_type] ?? d.task_type;
+        const isER = taskTag === "ER";
+        const isDel = taskTag === "Del";
+
+        const probeValues = [];
+        for (const v of Object.values(d.entity_values ?? {})) {
+          if (Array.isArray(v)) probeValues.push(...v.filter(Boolean));
+          else if (v) probeValues.push(v);
+        }
+        if (typeof d.gold_answer === "string" && d.gold_answer) probeValues.push(d.gold_answer);
+        if (typeof d.expected_answer === "string" && d.expected_answer) probeValues.push(d.expected_answer);
+        const valTokens = probeValues.map((v) => tokenSet(v)).filter((s) => s.size > 0);
+        const entityTokens = (d.entity ?? []).map((e) => tokenSet(e)).filter((s) => s.size > 0);
+
+        const probeIdx = phase === "before" ? beforeIdx : afterIdx;
+        const probeSnap = snaps[probeIdx] ?? "";
+
+        // Whole-text token-set containment (handles multi-line payloads like error_log).
+        const hasValue = (text) =>
+          valTokens.some((vt) => isER ? textHasValueBulk(text, vt) : textHasValue(text, vt));
+        // For deletion in the AFTER phase, mention of the value/entity with a deletion verb counts.
+        const hasDelEvent = (text) =>
+          entityTokens.some((et) => hasDeletionEvent(text, et, valTokens));
+
+        // Del semantics differ by phase:
+        //   before → gold is the original value (general matching).
+        //   after  → gold is "deletion happened" (deletion-event matching).
+        const isDelAfter = isDel && phase === "after";
+
+        let encoded = false;
+        if (isDelAfter) {
+          for (let i = 0; i <= probeIdx; i++) {
+            if (hasDelEvent(snaps[i])) { encoded = true; break; }
+          }
+        } else {
+          for (let i = 0; i <= probeIdx; i++) {
+            if (hasValue(snaps[i])) { encoded = true; break; }
+          }
+        }
+
+        const maintained = isDelAfter ? hasDelEvent(probeSnap) : hasValue(probeSnap);
+        const retrieved = isDelAfter ? hasDelEvent(ctx) : hasValue(ctx);
+
+        const answered = !!d.u_pass;
+
+        let failure_stage = null;
+        if (!encoded) failure_stage = "encoding";
+        else if (!maintained) failure_stage = "maintenance";
+        else if (!retrieved) failure_stage = "retrieval";
+        else if (!answered) failure_stage = "answering";
+
         return {
           task_type: d.task_type,
           question: d.question,
@@ -221,6 +365,7 @@ function main() {
           entity: d.entity ?? [],
           entity_values: d.entity_values ?? {},
           pass_type: d.pass_type ?? null,
+          failure_analysis: { encoded, maintained, retrieved, answered, failure_stage },
         };
       });
 
