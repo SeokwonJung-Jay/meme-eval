@@ -139,7 +139,7 @@ function fmtCost(v: number | null) {
     line-height: 1.55;
   }
   .mr-meta code {
-    background: #f3f3ed;
+    background: var(--code-bg);
     padding: 1px 5px;
     border-radius: 4px;
   }
@@ -212,14 +212,14 @@ function fmtCost(v: number | null) {
     margin-right: 4px;
   }
   .mr-table .col-overall {
-    background: #f7f7f1;
+    background: var(--overall-col);
   }
   .mr-table tbody .overall {
     font-weight: 500;
   }
   /* Highlight Cas/Abs success for Opus closure row — text color only */
   .mr-table tbody .row .success {
-    color: #1a7c4a;
+    color: var(--pass-fg);
     font-weight: 700;
   }
   .mr-table tbody .cost-col {
@@ -240,7 +240,7 @@ function fmtCost(v: number | null) {
     font-size: 12px;
   }
   .mr-table tbody .avg-row td.danger {
-    color: #b94747;
+    color: var(--fail-fg);
     font-weight: 700;
   }
   .mr-table tbody .avg-row th {

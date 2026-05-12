@@ -18,6 +18,10 @@ const baseUrl = import.meta.env.BASE_URL;
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231a1a1a'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='ui-sans-serif,system-ui,sans-serif' font-size='34' font-weight='800' fill='%23fafaf7'%3EM%3C/text%3E%3C/svg%3E" />
   </head>
   <body>
+    <button class="theme-toggle" type="button" aria-label="Toggle theme" onclick="(()=>{const r=document.documentElement;const cur=r.getAttribute('data-theme')||'light';const nx=cur==='dark'?'light':'dark';if(nx==='dark')r.setAttribute('data-theme','dark');else r.removeAttribute('data-theme');localStorage.setItem('theme',nx);})()">
+      <span class="toggle-sun" aria-hidden="true">☀</span>
+      <span class="toggle-moon" aria-hidden="true">☾</span>
+    </button>
     <main>
       <header class="hero">
         <h1>
@@ -195,9 +199,14 @@ const baseUrl = import.meta.env.BASE_URL;
       .fig {
         margin: 0 0 48px;
         padding: 24px;
-        background: var(--card);
+        background: #ffffff;     /* keep figure on a light canvas regardless of theme — SVG/PNG assets are designed for a light background */
         border: 1px solid var(--border);
         border-radius: 12px;
+      }
+      .taxonomy {
+        background: #ffffff;
+        border-radius: 8px;
+        padding: 8px;
       }
 
       .fig img {
@@ -240,15 +249,76 @@ const baseUrl = import.meta.env.BASE_URL;
         .fig { padding: 14px; }
       }
 
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #111111;
-          --fg: #f4f2ec;
-          --muted: #a8a59c;
-          --border: #2a2a28;
-          --card: #1a1a1a;
-        }
+      :root {
+        --card-soft: #f7f7f1;
+        --bubble-user: #eef4fa;
+        --bubble-assistant: #f3f3ee;
+        --diff-add-bg: #e4f5ea;
+        --diff-add-fg: #155a35;
+        --diff-rem-bg: #fbeaea;
+        --diff-rem-fg: #8b2828;
+        --pass-bg: #e4f5ea;
+        --pass-fg: #1a7c4a;
+        --fail-bg: #fbeaea;
+        --fail-fg: #b94747;
+        --overall-col: #f7f7f1;
+        --code-bg: #f3f3ed;
+        --stripe: #fbfbf6;
       }
+      :root[data-theme="dark"] {
+        --bg: #0f0f0f;
+        --fg: #ececea;
+        --muted: #9c9a90;
+        --border: #2d2d2a;
+        --card: #181818;
+        --card-soft: #1f1e1c;
+        --bubble-user: #1c2c3c;
+        --bubble-assistant: #2a2a26;
+        --diff-add-bg: #15321f;
+        --diff-add-fg: #9adfb4;
+        --diff-rem-bg: #3a1d1d;
+        --diff-rem-fg: #f0a0a0;
+        --pass-bg: #15321f;
+        --pass-fg: #9adfb4;
+        --fail-bg: #3a1d1d;
+        --fail-fg: #f0a0a0;
+        --overall-col: #1f1e1c;
+        --code-bg: #2a2a28;
+        --stripe: #181818;
+      }
+
+      .theme-toggle {
+        position: fixed;
+        top: 18px;
+        right: 18px;
+        z-index: 50;
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--fg);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        transition: background 0.15s ease, transform 0.05s ease;
+      }
+      .theme-toggle:hover { transform: translateY(-1px); }
+      .theme-toggle .toggle-sun { display: none; }
+      .theme-toggle .toggle-moon { display: inline; }
+      :root[data-theme="dark"] .theme-toggle .toggle-sun { display: inline; }
+      :root[data-theme="dark"] .theme-toggle .toggle-moon { display: none; }
     </style>
+
+    <script is:inline>
+      (function () {
+        const stored = localStorage.getItem("theme");
+        const sys = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        const theme = stored || sys;
+        if (theme === "dark") document.documentElement.setAttribute("data-theme", "dark");
+      })();
+    </script>
   </body>
 </html>
