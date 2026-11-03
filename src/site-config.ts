@@ -1,6 +1,7 @@
 // MEME project page — public companion to the arXiv preprint.
 
 export const siteConfig = {
+  paperUrl: "https://arxiv.org/abs/2605.12477",
   codeUrl: "https://github.com/SeokwonJung-Jay/MEME-public",
   dataUrl: "https://huggingface.co/datasets/meme-benchmark/MEME",
   authors: "Seokwon Jung et al.",
